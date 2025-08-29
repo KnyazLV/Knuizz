@@ -1,3 +1,4 @@
+using knuizz_api.Application.Services;
 using knuizz_api.Infrastructure.Data;
 using knuizz_api.Infrastructure.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,12 @@ builder.Services.AddSwaggerGen(options => {
     });
 
     // Put here configuration for JWT auth in Swagger
+});
+
+builder.Services.AddScoped<OpenTriviaService>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddHttpClient("OpenTriviaClient", client => {
+    client.BaseAddress = new Uri("https://opentdb.com/");
 });
 
 // --- 2. BUILD ---

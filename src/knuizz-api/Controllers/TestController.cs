@@ -25,12 +25,10 @@ public class TestController : ControllerBase {
             return StatusCode(500, $"Database connection failed: {ex.Message}");
         }
     }
-
-    // --- NEW METHOD FOR TESTING SEEDED DATA ---
+    
     [HttpGet("random-questions")]
     public async Task<IActionResult> GetRandomQuestions([FromQuery] int count = 5) {
         try {
-            // We request 'count' random questions from the database.
             // This query uses a PostgreSQL-specific function for randomness.
             var questions = await _context.Questions
                 .OrderBy(q => EF.Functions.Random())
