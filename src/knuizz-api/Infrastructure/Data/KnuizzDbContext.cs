@@ -47,7 +47,7 @@ public class KnuizzDbContext : DbContext {
             entity.Property(e => e.QuestionText).IsRequired();
             entity.Property(e => e.SourceName).HasMaxLength(50);
 
-            // Конвертация массива строк в JSON и обратно
+            // Converting an array of strings to JSON and back
             entity.Property(e => e.Options)
                 .HasConversion(
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
@@ -70,7 +70,7 @@ public class KnuizzDbContext : DbContext {
                 .IsRequired(false);
 
             entity.HasOne(e => e.UserQuiz)
-                .WithMany() // У истории матча нет обратной навигации от викторины
+                .WithMany()
                 .HasForeignKey(e => e.UserQuizId)
                 .IsRequired(false);
         });

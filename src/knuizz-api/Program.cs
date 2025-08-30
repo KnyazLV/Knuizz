@@ -1,6 +1,9 @@
+using System.Text;
 using knuizz_api.Application.Services;
 using knuizz_api.Infrastructure.Data;
 using knuizz_api.Infrastructure.Data.Seeding;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -31,14 +34,57 @@ builder.Services.AddSwaggerGen(options => {
         Description = "API for quizzes \"Knuizz\""
     });
 
-    // Put here configuration for JWT auth in Swagger
+    // --- START: Add JWT Authentication to Swagger ---
+
+    // 1. Define the security scheme (how the API is protected)
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description =
+            "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\""
+    });
+
+    // 2. Make sure swagger uses the security scheme
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
+
+    // --- END: Add JWT Authentication to Swagger ---
 });
 
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<OpenTriviaService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
-builder.Services.AddHttpClient("OpenTriviaClient", client => {
-    client.BaseAddress = new Uri("https://opentdb.com/");
-});
+builder.Services.AddHttpClient("OpenTriviaClient", client => { client.BaseAddress = new Uri("https://opentdb.com/"); });
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(options => {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options => {
+        options.TokenValidationParameters = new TokenValidationParameters {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
 
 // --- 2. BUILD ---
 var app = builder.Build();
@@ -66,7 +112,7 @@ using (var scope = app.Services.CreateScope()) {
     try {
         var context = services.GetRequiredService<KnuizzDbContext>();
         var logger = services.GetRequiredService<ILogger<DataSeeder>>();
-        
+
         var seeder = new DataSeeder(context, logger);
         await seeder.SeedAsync();
     }
