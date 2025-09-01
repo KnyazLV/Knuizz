@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>4ce1de37-89bb-445e-b717-ea1ea509b566</UserSecretsId>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql"/>
+        <PackageReference Include="BCrypt.Net-Next"/>
+        <PackageReference Include="CsvHelper"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+        <PackageReference Include="Swashbuckle.AspNetCore"/>
+        <PackageReference Include="System.Text.Encoding.CodePages"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Infrastructure\Data\Migrations\"/>
+    </ItemGroup>
+</Project>
