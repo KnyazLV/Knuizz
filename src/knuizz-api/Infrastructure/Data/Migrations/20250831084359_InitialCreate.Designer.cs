@@ -12,7 +12,7 @@ using knuizz_api.Infrastructure.Data;
 namespace knuizz_api.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(KnuizzDbContext))]
-    [Migration("20250828123024_InitialCreate")]
+    [Migration("20250831084359_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -157,6 +157,9 @@ namespace knuizz_api.Infrastructure.Data.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("CurrentExperience")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Level")
                         .HasColumnType("integer");

@@ -57,7 +57,8 @@ public class KnuizzDbContext : DbContext {
             entity.HasOne(e => e.UserQuiz)
                 .WithMany(q => q.Questions)
                 .HasForeignKey(e => e.UserQuizId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // MatchHistory

@@ -55,6 +55,7 @@ namespace knuizz_api.Infrastructure.Data.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Rating = table.Column<int>(type: "integer", nullable: false),
                     Level = table.Column<int>(type: "integer", nullable: false),
+                    CurrentExperience = table.Column<int>(type: "integer", nullable: false),
                     TotalGamesPlayed = table.Column<int>(type: "integer", nullable: false),
                     TotalCorrectAnswers = table.Column<int>(type: "integer", nullable: false),
                     TotalAnswers = table.Column<int>(type: "integer", nullable: false)
