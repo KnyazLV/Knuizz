@@ -5,6 +5,7 @@ using knuizz_api.Infrastructure.Data.Seeding;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,13 @@ builder.Services.AddCors(options => {
         });
 });
 
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
+        name: "PostgreSQL Database",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: new[] { "database" });
+
 // Configuration of Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => {
@@ -35,8 +43,7 @@ builder.Services.AddSwaggerGen(options => {
     });
 
     // --- START: Add JWT Authentication to Swagger ---
-
-    // 1. Define the security scheme (how the API is protected)
+    
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey,
@@ -46,8 +53,7 @@ builder.Services.AddSwaggerGen(options => {
         Description =
             "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\""
     });
-
-    // 2. Make sure swagger uses the security scheme
+    
     options.AddSecurityRequirement(new OpenApiSecurityRequirement {
         {
             new OpenApiSecurityScheme {
@@ -91,18 +97,19 @@ var app = builder.Build();
 
 
 // --- 3. HTTP-REQUESTS ---
-
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options => 
+    {
+        options.EnablePersistAuthorization(); 
+    });
 }
 
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
-
-// Put here middleware for auth
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.MapHealthChecks("/health");
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
