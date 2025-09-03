@@ -108,6 +108,8 @@ public class QuizService : IQuizService {
     }
 
     public async Task<Guid> CreateUserQuizAsync(CreateQuizDto quizDto, Guid authorId) {
+        if (quizDto.Questions.Count > 30) throw new ArgumentException("A quiz cannot have more than 30 questions.");
+
         var userQuiz = new UserQuiz {
             Title = quizDto.Title,
             Description = quizDto.Description,
@@ -176,9 +178,9 @@ public class QuizService : IQuizService {
     }
 
     public async Task<List<QuizSummaryDto>> SearchQuizzesByTitleAsync(string titleQuery) {
-        return await _context.UserQuizzes
+        var query = _context.UserQuizzes
             .AsNoTracking()
-            .Where(q => EF.Functions.ILike(q.Title, $"%{titleQuery}%"))
+            .Where(q => q.Title.Contains(titleQuery, StringComparison.OrdinalIgnoreCase))
             .Include(q => q.Author)
             .Select(q => new QuizSummaryDto {
                 Id = q.Id,
@@ -189,8 +191,9 @@ public class QuizService : IQuizService {
                 CreatedAt = q.CreatedAt
             })
             .OrderByDescending(q => q.CreatedAt)
-            .Take(20)
-            .ToListAsync();
+            .Take(20);
+
+        return await query.ToListAsync();
     }
 
     /// <summary>

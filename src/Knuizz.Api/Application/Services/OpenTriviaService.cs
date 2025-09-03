@@ -18,8 +18,6 @@ public class OpenTriviaService {
         if (amount > 50) amount = 50; // API limit
 
         var httpClient = _httpClientFactory.CreateClient("OpenTriviaClient");
-
-        // We use 'base64' encoding to handle special characters correctly.
         var requestUrl = $"api.php?amount={amount}&encode=base64";
 
         try {
@@ -34,7 +32,7 @@ public class OpenTriviaService {
         }
         catch (Exception ex) {
             _logger.LogError(ex, "An error occurred while fetching questions from Open Trivia API.");
-            throw; // Re-throw the exception to be handled by a global error handler.
+            throw;
         }
     }
 
@@ -53,14 +51,13 @@ public class OpenTriviaService {
             QuestionText = questionText,
             Options = allAnswers.ToArray(),
             CorrectAnswerIndex = correctIndex,
-            SourceName = "trivia_api" // Identifier for this source.
+            SourceName = "trivia_api"
         };
     }
 
     private string DecodeBase64(string base64Encoded) {
         var base64EncodedBytes = Convert.FromBase64String(base64Encoded);
         var decodedString = Encoding.UTF8.GetString(base64EncodedBytes);
-        // The API also HTML-encodes some characters, so we decode them too.
         return HttpUtility.HtmlDecode(decodedString);
     }
 }

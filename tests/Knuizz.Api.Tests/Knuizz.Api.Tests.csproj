@@ -10,14 +10,16 @@
         <PackageReference Include="coverlet.collector"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="Moq"/>
+        <PackageReference Include="Moq.EntityFrameworkCore"/>
         <PackageReference Include="NUnit"/>
         <PackageReference Include="NUnit.Analyzers"/>
         <PackageReference Include="NUnit3TestAdapter"/>
 
-        <!-- ДОБАВЛЯЕМ ЯВНЫЕ ССЫЛКИ НА ПАКЕТЫ EF CORE -->
         <PackageReference Include="Microsoft.EntityFrameworkCore"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory"/>
     </ItemGroup>
     <ItemGroup>
         <Using Include="NUnit.Framework"/>
