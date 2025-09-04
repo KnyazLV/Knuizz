@@ -9,6 +9,7 @@ namespace Knuizz.Api.Controllers;
 [ApiController]
 [Route("api/quizzes")]
 public class QuizController : ControllerBase {
+    private const int MaxQuestionsPerQuiz = 30;
     private readonly IQuizService _quizService;
 
     public QuizController(IQuizService quizService) {
@@ -58,6 +59,8 @@ public class QuizController : ControllerBase {
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateUserQuiz([FromBody] CreateQuizDto createDto) {
+        if (createDto.Questions.Count > MaxQuestionsPerQuiz)
+            return BadRequest(new { message = $"A quiz cannot have more than {MaxQuestionsPerQuiz} questions." });
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var newQuizId = await _quizService.CreateUserQuizAsync(createDto, userId);
 
@@ -68,6 +71,8 @@ public class QuizController : ControllerBase {
     [HttpPut("{id:guid}")]
     [Authorize]
     public async Task<IActionResult> UpdateUserQuiz(Guid id, [FromBody] CreateQuizDto updateDto) {
+        if (updateDto.Questions.Count > MaxQuestionsPerQuiz)
+            return BadRequest(new { message = $"A quiz cannot have more than {MaxQuestionsPerQuiz} questions." });
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userIdString)) return Unauthorized("User identifier is missing in token.");
         var userId = Guid.Parse(userIdString);
