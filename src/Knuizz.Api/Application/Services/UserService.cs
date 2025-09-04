@@ -1,4 +1,5 @@
 ﻿using Knuizz.Api.Application.DTOs.User;
+using Knuizz.Api.Application.Exceptions;
 using Knuizz.Api.Domain.Entities;
 using Knuizz.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,9 @@ public class UserService : IUserService {
             .Where(u => u.Id == userId)
             .Select(u => new UserProfileDto { Id = u.Id, Username = u.Username, Email = u.Email })
             .FirstOrDefaultAsync();
-        if (user == null) throw new Exception("User Profile not found!");
+
+        if (user == null)
+            throw new EntityNotFoundException($"User with ID {userId} not found.");
 
         return user;
     }

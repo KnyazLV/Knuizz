@@ -1,4 +1,5 @@
 ﻿using Knuizz.Api.Application.DTOs.User;
+using Knuizz.Api.Application.Exceptions;
 using Knuizz.Api.Application.Services;
 using Knuizz.Api.Domain.Entities;
 using Knuizz.Api.Infrastructure.Data;
@@ -25,7 +26,7 @@ public class UserServiceTests {
 
     private KnuizzDbContext _context;
     private UserService _userService;
-    
+
     //#region GetUserProfileAsync
 
     [Test]
@@ -45,15 +46,14 @@ public class UserServiceTests {
     }
 
     [Test]
-    public void GetUserProfileAsync_WhenUserNotFound_ShouldThrowException() {
-        // Act & Assert
-        Assert.ThrowsAsync<Exception>(async () => await _userService.GetUserProfileAsync(Guid.NewGuid()));
+    public void GetUserProfileAsync_WhenUserNotFound_ShouldThrowEntityNotFoundException() {
+        Assert.ThrowsAsync<EntityNotFoundException>(async () => await _userService.GetUserProfileAsync(Guid.NewGuid()));
     }
-    
+
     //#endregion
-    
+
     //#region UpdateUserProfileAsync
-    
+
     [Test]
     public async Task UpdateUserProfileAsync_WhenUserExistsAndUsernameIsUnique_ShouldSucceed() {
         // Arrange
@@ -92,11 +92,11 @@ public class UserServiceTests {
         // Act & Assert
         Assert.ThrowsAsync<ArgumentException>(async () => await _userService.UpdateUserProfileAsync(user1.Id, updateDto));
     }
-    
+
     //#endregion
-    
+
     //#region GetUserStatisticsAsync
-    
+
     [Test]
     public async Task GetUserStatisticsAsync_WhenStatsExist_ShouldReturnStatistics() {
         // Arrange
@@ -121,11 +121,11 @@ public class UserServiceTests {
         // Assert
         Assert.That(result, Is.Null);
     }
-    
+
     //#endregion
-    
+
     //#region GetLeaderboardAsync
-    
+
     [Test]
     public async Task GetLeaderboardAsync_ShouldReturnTopUsersSortedByRating() {
         // Arrange
@@ -165,6 +165,6 @@ public class UserServiceTests {
         // Assert
         Assert.That(leaderboard.Count, Is.EqualTo(100));
     }
-    
+
     //#endregion
 }

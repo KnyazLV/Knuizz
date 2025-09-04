@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Knuizz.Api.Application.Services;
 
-public class AuthService {
+public class AuthService : IAuthService {
     private readonly IConfiguration _configuration;
     private readonly KnuizzDbContext _context;
 

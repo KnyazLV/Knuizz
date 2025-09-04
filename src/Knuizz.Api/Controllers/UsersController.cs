@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Knuizz.Api.Application.DTOs.User;
+using Knuizz.Api.Application.Exceptions;
 using Knuizz.Api.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +20,17 @@ public class UsersController : ControllerBase {
     [HttpGet("profile")]
     [Authorize]
     public async Task<IActionResult> GetMyProfile() {
-        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userIdString)) return Unauthorized("User identifier is missing in token.");
-        var userId = Guid.Parse(userIdString);
-        var profile = await _userService.GetUserProfileAsync(userId);
-        if (profile == null) return NotFound();
-        return Ok(profile);
+        try {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString)) return Unauthorized("User identifier is missing in token.");
+            var userId = Guid.Parse(userIdString);
+
+            var profile = await _userService.GetUserProfileAsync(userId);
+            return Ok(profile);
+        }
+        catch (EntityNotFoundException ex) {
+            return NotFound(new { message = ex.Message });
+        }
     }
 
     // PUT /api/users/profile

@@ -71,9 +71,10 @@ builder.Services.AddSwaggerGen(options => {
     // --- END: Add JWT Authentication to Swagger ---
 });
 
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
+// builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<OpenTriviaService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddHttpClient("OpenTriviaClient", client => { client.BaseAddress = new Uri("https://opentdb.com/"); });
 
