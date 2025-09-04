@@ -22,6 +22,9 @@ public class AuthService {
         if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
             throw new ArgumentException("User with this email already exists.");
 
+        if (await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
+            throw new ArgumentException("Username is already taken.");
+
         var user = new User {
             Username = registerDto.Username,
             Email = registerDto.Email,
