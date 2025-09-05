@@ -108,7 +108,8 @@ public class QuizService : IQuizService {
     }
 
     public async Task<Guid> CreateUserQuizAsync(CreateQuizDto quizDto, Guid authorId) {
-        if (quizDto.Questions.Count > 30) throw new ArgumentException("A quiz cannot have more than 30 questions.");
+        if (quizDto.Questions.Count > DomainConstants.Quiz.MaxQuestionsPerQuiz)
+            throw new ArgumentException($"A quiz cannot have more than {DomainConstants.Quiz.MaxQuestionsPerQuiz} questions.");
 
         var userQuiz = new UserQuiz {
             Title = quizDto.Title,
@@ -203,22 +204,55 @@ public class QuizService : IQuizService {
         if (totalQuestions == 0) return 0;
 
         var accuracy = (double)score / totalQuestions;
+        var ratingDifference = currentRating - DomainConstants.Rating.BaseRating;
+        
+        var requiredAccuracy = DomainConstants.Rating.BaseAccuracyThreshold +
+                               ratingDifference / DomainConstants.Rating.ThresholdIncreaseFactor;
+        
+        requiredAccuracy = Math.Min(requiredAccuracy, 0.85);
 
-        var maxGain = Math.Max(50.0 - (currentRating - 1000) / 20.0, 5.0);
-        var maxLoss = Math.Max(5.0 + (currentRating - 1000) / 25.0, 5.0);
+        var maxGain = Math.Max(DomainConstants.Rating.MinGain,
+            DomainConstants.Rating.MaxGain - ratingDifference / DomainConstants.Rating.GainReductionFactor);
+
+        var maxLoss = Math.Min(DomainConstants.Rating.MaxLoss,
+            DomainConstants.Rating.MinLoss + ratingDifference / DomainConstants.Rating.LossIncreaseFactor);
 
         double ratingChange;
-        if (accuracy >= 0.5)
-            ratingChange = maxGain * (accuracy - 0.5) * 2;
-        else
-            ratingChange = -maxLoss * (0.5 - accuracy) * 2;
+
+        if (accuracy >= requiredAccuracy) {
+            var performanceFactor = (accuracy - requiredAccuracy) / (1.0 - requiredAccuracy);
+            ratingChange = maxGain * performanceFactor;
+        } else {
+            var performanceFactor = (requiredAccuracy - accuracy) / requiredAccuracy;
+            ratingChange = -maxLoss * performanceFactor;
+        }
+        
+        if (ratingChange > 0 && ratingChange < 1) ratingChange = 1;
+        if (ratingChange < 0 && ratingChange > -1) ratingChange = -1;
 
         return (int)Math.Round(ratingChange);
     }
 
+    // private int CalculateRatingChange(int score, int totalQuestions, int currentRating) {
+    //     if (totalQuestions == 0) return 0;
+    //
+    //     var accuracy = (double)score / totalQuestions;
+    //
+    //     var maxGain = Math.Max(50.0 - (currentRating - 1000) / 20.0, 5.0);
+    //     var maxLoss = Math.Max(5.0 + (currentRating - 1000) / 25.0, 5.0);
+    //
+    //     double ratingChange;
+    //     if (accuracy >= 0.5)
+    //         ratingChange = maxGain * (accuracy - 0.5) * 2;
+    //     else
+    //         ratingChange = -maxLoss * (0.5 - accuracy) * 2;
+    //
+    //     return (int)Math.Round(ratingChange);
+    // }
+
     private int ExperienceForNextLevel(int currentLevel) {
-        const double baseExperience = 50.0;
-        const double growthFactor = 1.2; // Each level requires 20% more experience.
+        const double baseExperience = DomainConstants.Experience.BaseExperienceForLevel;
+        const double growthFactor = DomainConstants.Experience.GrowthFactor; // Each level requires 20% more experience.
 
         return (int)Math.Floor(baseExperience * Math.Pow(growthFactor, currentLevel - 1));
     }

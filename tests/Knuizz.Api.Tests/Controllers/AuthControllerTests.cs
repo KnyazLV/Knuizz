@@ -72,10 +72,9 @@ public class AuthControllerTests {
         Assert.That(result, Is.InstanceOf<OkObjectResult>());
         var okResult = (OkObjectResult)result;
 
-        var returnedObject = okResult.Value;
-        var tokenProperty = returnedObject?.GetType().GetProperty("token");
-        Assert.That(tokenProperty, Is.Not.Null, "Response object should have a 'token' property.");
-        Assert.That(tokenProperty?.GetValue(returnedObject, null), Is.EqualTo(expectedToken));
+        var responseDto = okResult.Value as LoginResponseDto;
+        Assert.That(responseDto, Is.Not.Null);
+        Assert.That(responseDto.Token, Is.EqualTo(expectedToken));
     }
 
     [Test]

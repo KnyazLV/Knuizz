@@ -15,7 +15,7 @@ public class OpenTriviaService {
     }
 
     public async Task<List<Question>> GetQuestionsAsync(int amount) {
-        if (amount > 50) amount = 50; // API limit
+        if (amount > DomainConstants.Quiz.OpenTriviaAPIQuestionLimit) amount = DomainConstants.Quiz.OpenTriviaAPIQuestionLimit; // API limit
 
         var httpClient = _httpClientFactory.CreateClient("OpenTriviaClient");
         var requestUrl = $"api.php?amount={amount}&encode=base64";

@@ -42,7 +42,7 @@ public class UserService : IUserService {
     }
 
     public async Task<List<LeaderboardEntryDto>> GetLeaderboardAsync(int count) {
-        if (count > 100) count = 100;
+        if (count > DomainConstants.Leaderboard.MaxTopPlayersLimit) count = DomainConstants.Leaderboard.MaxTopPlayersLimit;
         var leaderboardEntries = await _context.UserStatistics
             .OrderByDescending(s => s.Rating)
             .Take(count)

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Knuizz.Api.Application.Services;
 using Knuizz.Api.Infrastructure.Data;
@@ -16,7 +17,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 if (string.IsNullOrEmpty(connectionString)) throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
 
 builder.Services.AddDbContext<KnuizzDbContext>(options => options.UseNpgsql(connectionString));
-
+builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 
 builder.Services.AddCors(options => {
@@ -69,6 +70,10 @@ builder.Services.AddSwaggerGen(options => {
     });
 
     // --- END: Add JWT Authentication to Swagger ---
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    // Указываем Swagger использовать этот файл.
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
 // builder.Services.AddScoped<AuthService>();
