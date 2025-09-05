@@ -1,8 +1,10 @@
-﻿namespace Knuizz.Api.Domain.Entities;
+﻿using Knuizz.Api.Application;
+
+namespace Knuizz.Api.Domain.Entities;
 
 public class UserStatistics {
     public Guid UserId { get; set; }
-    public int Rating { get; set; } = 1000;
+    public int Rating { get; set; } = (int)DomainConstants.Rating.BaseRating;
     public int Level { get; set; } = 1;
     public int CurrentExperience { get; set; } = 0;
     public int TotalGamesPlayed { get; set; }

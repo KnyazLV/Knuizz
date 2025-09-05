@@ -233,23 +233,6 @@ public class QuizService : IQuizService {
         return (int)Math.Round(ratingChange);
     }
 
-    // private int CalculateRatingChange(int score, int totalQuestions, int currentRating) {
-    //     if (totalQuestions == 0) return 0;
-    //
-    //     var accuracy = (double)score / totalQuestions;
-    //
-    //     var maxGain = Math.Max(50.0 - (currentRating - 1000) / 20.0, 5.0);
-    //     var maxLoss = Math.Max(5.0 + (currentRating - 1000) / 25.0, 5.0);
-    //
-    //     double ratingChange;
-    //     if (accuracy >= 0.5)
-    //         ratingChange = maxGain * (accuracy - 0.5) * 2;
-    //     else
-    //         ratingChange = -maxLoss * (0.5 - accuracy) * 2;
-    //
-    //     return (int)Math.Round(ratingChange);
-    // }
-
     private int ExperienceForNextLevel(int currentLevel) {
         const double baseExperience = DomainConstants.Experience.BaseExperienceForLevel;
         const double growthFactor = DomainConstants.Experience.GrowthFactor; // Each level requires 20% more experience.
