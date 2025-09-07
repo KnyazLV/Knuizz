@@ -23,9 +23,12 @@ builder.Services.AddControllers();
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowReactApp", policyBuilder => {
         // React-app URL (localhost:3000 in dev)
-        policyBuilder.WithOrigins("http://localhost:3000")
+        policyBuilder.WithOrigins("http://localhost:5173") 
             .AllowAnyHeader()
             .AllowAnyMethod();
+        // policyBuilder.WithOrigins("http://localhost:3000")
+        //     .AllowAnyHeader()
+        //     .AllowAnyMethod();
     });
 });
 
