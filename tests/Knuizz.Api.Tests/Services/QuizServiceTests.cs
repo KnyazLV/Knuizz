@@ -25,9 +25,17 @@ public class QuizServiceTests {
 
         _mockTriviaService = new Mock<OpenTriviaService>(mockHttpClientFactory.Object, mockTriviaLogger.Object);
 
+        _mockServiceProvider = new Mock<IServiceProvider>();
+        _mockTriviaBuffer = new Mock<ITriviaQuestionBuffer>();
+
         var mockLogger = new Mock<ILogger<QuizService>>();
 
-        _quizService = new QuizService(_context, _mockTriviaService.Object, mockLogger.Object);
+        _quizService = new QuizService(
+            _context,
+            _mockTriviaBuffer.Object,
+            mockLogger.Object,
+            _mockServiceProvider.Object
+        );
     }
 
     [TearDown]
@@ -40,6 +48,8 @@ public class QuizServiceTests {
     private QuizService _quizService;
     private DbContextOptions<KnuizzDbContext> _options;
     private Mock<OpenTriviaService> _mockTriviaService;
+    private Mock<ITriviaQuestionBuffer> _mockTriviaBuffer;
+    private Mock<IServiceProvider> _mockServiceProvider;
 
     //#region SubmitMatchResult
 
@@ -146,6 +156,30 @@ public class QuizServiceTests {
     //#endregion
 
     //#region UserQuiz
+
+    [Test]
+    public async Task GetQuestionsFromSourceAsync_WhenSourceIsTriviaApi_ShouldReturnQuestionsFromBuffer() {
+        // Arrange
+        var expectedQuestions = new List<Question> {
+            new() { QuestionText = "Question 1" },
+            new() { QuestionText = "Question 2" }
+        };
+        var requestedCount = 2;
+
+        // Настраиваем мок буфера: при вызове GetQuestionsAsync он должен вернуть наш тестовый список.
+        _mockTriviaBuffer.Setup(b => b.GetQuestionsAsync(requestedCount, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedQuestions);
+
+        // Act
+        var result = await _quizService.GetQuestionsFromSourceAsync("trivia_api", requestedCount);
+
+        // Assert
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(expectedQuestions.Count));
+        Assert.That(result, Is.EqualTo(expectedQuestions));
+        // Убедимся, что метод был вызван ровно один раз.
+        _mockTriviaBuffer.Verify(b => b.GetQuestionsAsync(requestedCount, It.IsAny<CancellationToken>()), Times.Once);
+    }
 
     [Test]
     public void GetQuestionsFromSourceAsync_WhenSourceIsUnsupported_ShouldThrowArgumentException() {

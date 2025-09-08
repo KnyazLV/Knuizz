@@ -8,29 +8,39 @@ namespace Knuizz.Api.Application.Services;
 public class QuizService : IQuizService {
     private readonly KnuizzDbContext _context;
     private readonly ILogger<QuizService> _logger;
-    private readonly OpenTriviaService _triviaService;
+    private readonly IServiceProvider _serviceProvider; // Для "запасного варианта"
+    private readonly ITriviaQuestionBuffer _triviaBuffer;
 
     public QuizService(
         KnuizzDbContext context,
-        OpenTriviaService triviaService,
-        ILogger<QuizService> logger) {
+        ITriviaQuestionBuffer triviaBuffer,
+        ILogger<QuizService> logger,
+        IServiceProvider serviceProvider) {
         _context = context;
-        _triviaService = triviaService;
+        _triviaBuffer = triviaBuffer;
         _logger = logger;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task<List<Question>> GetQuestionsFromSourceAsync(string source, int count) {
         _logger.LogInformation("Attempting to get {Count} questions from source: {Source}", count, source);
 
-        return source.ToLowerInvariant() switch {
-            "trivia_api" => await _triviaService.GetQuestionsAsync(count),
-            "wwtbm_ru" or "wwtbm_en" => await _context.Questions
-                .Where(q => q.SourceName == source)
-                .OrderBy(q => EF.Functions.Random())
-                .Take(count)
-                .ToListAsync(),
-            _ => throw new ArgumentException($"The source '{source}' is not supported.")
-        };
+        switch (source.ToLowerInvariant()) {
+            case "trivia_api": {
+                var questions = await _triviaBuffer.GetQuestionsAsync(count);
+                if (!questions.Any()) throw new Exception("The question source is temporarily unavailable.");
+                return questions;
+            }
+
+            case "wwtbm_ru" or "wwtbm_en":
+                return await _context.Questions
+                    .Where(q => q.SourceName == source)
+                    .OrderBy(q => EF.Functions.Random())
+                    .Take(count)
+                    .ToListAsync();
+            default:
+                throw new ArgumentException($"The source '{source}' is not supported.");
+        }
     }
 
     //#region SubmitResults
@@ -205,10 +215,10 @@ public class QuizService : IQuizService {
 
         var accuracy = (double)score / totalQuestions;
         var ratingDifference = currentRating - DomainConstants.Rating.BaseRating;
-        
+
         var requiredAccuracy = DomainConstants.Rating.BaseAccuracyThreshold +
                                ratingDifference / DomainConstants.Rating.ThresholdIncreaseFactor;
-        
+
         requiredAccuracy = Math.Min(requiredAccuracy, 0.85);
 
         var maxGain = Math.Max(DomainConstants.Rating.MinGain,
@@ -226,7 +236,7 @@ public class QuizService : IQuizService {
             var performanceFactor = (requiredAccuracy - accuracy) / requiredAccuracy;
             ratingChange = -maxLoss * performanceFactor;
         }
-        
+
         if (ratingChange > 0 && ratingChange < 1) ratingChange = 1;
         if (ratingChange < 0 && ratingChange > -1) ratingChange = -1;
 

@@ -23,7 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowReactApp", policyBuilder => {
         // React-app URL (localhost:3000 in dev)
-        policyBuilder.WithOrigins("http://localhost:5173") 
+        policyBuilder.WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
         // policyBuilder.WithOrigins("http://localhost:3000")
@@ -79,11 +79,13 @@ builder.Services.AddSwaggerGen(options => {
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-// builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<OpenTriviaService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
+
+builder.Services.AddSingleton<ITriviaQuestionBuffer, TriviaQuestionBuffer>();
+builder.Services.AddHostedService(provider => (TriviaQuestionBuffer)provider.GetRequiredService<ITriviaQuestionBuffer>());
 builder.Services.AddHttpClient("OpenTriviaClient", client => { client.BaseAddress = new Uri("https://opentdb.com/"); });
 
 // Configure JWT Authentication
