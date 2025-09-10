@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Knuizz.Api.Application.DTOs.Auth;
+using Knuizz.Api.Application.Exceptions;
 using Knuizz.Api.Domain.Entities;
 using Knuizz.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,10 @@ public class AuthService : IAuthService {
 
     public async Task<User> RegisterAsync(RegisterDto registerDto) {
         if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
-            throw new ArgumentException("User with this email already exists.");
+            throw new DuplicateUserException("User with this email already exists.");
 
         if (await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
-            throw new ArgumentException("Username is already taken.");
+            throw new DuplicateUserException("This username is already taken.");
 
         var user = new User {
             Username = registerDto.Username,

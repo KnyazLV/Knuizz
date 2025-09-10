@@ -72,7 +72,8 @@ public class KnuizzDbContext : DbContext {
             entity.HasOne(e => e.User)
                 .WithMany(u => u.MatchHistories)
                 .HasForeignKey(e => e.UserId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(e => e.UserQuiz)
                 .WithMany()

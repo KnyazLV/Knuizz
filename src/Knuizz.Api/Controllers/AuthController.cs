@@ -1,4 +1,5 @@
 ﻿using Knuizz.Api.Application.DTOs.Auth;
+using Knuizz.Api.Application.Exceptions;
 using Knuizz.Api.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,16 +27,22 @@ public class AuthController : ControllerBase {
     /// <param name="registerDto">Registration details: username, email, and password.</param>
     /// <returns>Notification of successful registration.</returns>
     /// <response code="200">User name registered successfully.</response>
-    /// <response code="400">Error in request (e.g., email or username already taken).</response>
+    /// <response code="409">Error in request (e.g., email or username already taken).</response>
+    /// <response code="400">Server error</response>
     [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(RegisterDto registerDto) {
         try {
             var user = await _authService.RegisterAsync(registerDto);
-            return Ok($"User {user.Username} registered successfully.");
+            return Ok(new { message = $"User {user.Username} registered successfully." });
+        }
+        catch (DuplicateUserException ex) {
+            return Conflict(new { message = ex.Message });
         }
         catch (ArgumentException ex) {
-            return BadRequest(ex.Message);
+            return BadRequest(new { message = ex.Message });
         }
     }
 
