@@ -2,14 +2,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../../app/store';
 
-// Определяем типы для регистрации, согласно вашей OpenAPI спецификации
 interface RegisterRequest {
     username: string;
     email: string;
     password: string;
 }
 
-// Типы для логина
 interface LoginRequest {
     email: string;
     password: string;
@@ -33,7 +31,6 @@ export const apiSlice = createApi({
     }),
     tagTypes: [],
     endpoints: (builder) => ({
-        // Эндпоинт для логина (уже был)
         login: builder.mutation<LoginResponse, LoginRequest>({
             query: (credentials) => ({
                 url: '/Auth/login',
@@ -41,7 +38,6 @@ export const apiSlice = createApi({
                 body: credentials,
             }),
         }),
-        // НОВЫЙ эндпоинт для регистрации
         register: builder.mutation<void, RegisterRequest>({
             query: (userInfo) => ({
                 url: '/Auth/register',
@@ -52,5 +48,4 @@ export const apiSlice = createApi({
     }),
 });
 
-// Экспортируем ОБА хука
 export const { useLoginMutation, useRegisterMutation } = apiSlice;

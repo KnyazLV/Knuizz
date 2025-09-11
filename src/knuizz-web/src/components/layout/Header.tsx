@@ -41,7 +41,7 @@ export default function Header() {
                 p="4"
                 className={`transition-colors duration-300 ${
                     isScrolled
-                        ? 'bg-[var(--slate-a2)] border-b border-[var(--slate-a5)]'
+                        ? 'bg-[var(--color-background)] border-b border-[var(--slate-a6)]'
                         : 'bg-transparent border-b border-transparent'
                 }`}
             >
@@ -50,8 +50,15 @@ export default function Header() {
                 </Link>
 
                 <Flex gap="4" align="center">
+                    <Link
+                        to="/leaderboard"
+                        className="text-base font-semibold uppercase transition-all duration-300 border-b-2 border-transparent hover:border-[var(--accent-9)]"
+                        style={{ color: 'white' }}
+                    >
+                        Leaderboard
+                    </Link>
                     <SegmentedControl.Root
-                        style={{ background: 'var(--slate-3)' }}
+                        style={{ background: 'var(--sand-1)' }}
                         defaultValue="ru"
                     >
                         <SegmentedControl.Item value="ru">RU</SegmentedControl.Item>
