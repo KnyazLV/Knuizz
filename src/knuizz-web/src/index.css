@@ -25,6 +25,12 @@ a:hover  {
     text-decoration: none;
 }
 
+.inner-container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
 
 /* Set colors accents */
 .text-gradient {
