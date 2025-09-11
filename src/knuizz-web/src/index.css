@@ -1,0 +1,22 @@
+﻿/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/*body{*/
+/*    padding-top: 4rem;*/
+/*}*/
+
+/* Reset and base styles  */
+* {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}

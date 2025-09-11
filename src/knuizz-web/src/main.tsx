@@ -1,31 +1,19 @@
 // src/main.tsx
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
+import { Theme } from '@radix-ui/themes';
+
+import '@radix-ui/themes/styles.css';
+import './index.css';
 
 import { store } from './app/store.ts';
-import App from './App.tsx';
-import HomePage from './pages/HomePage.tsx';
-import './styles/input.css';
-
-const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <App />,
-        children: [
-            {
-                index: true,
-                element: <HomePage />,
-            },
-        ],
-    },
-]);
+import { router } from './app/routes.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <Provider store={store}>
+    <Provider store={store}>
+        <Theme appearance="dark" accentColor="purple" grayColor="slate" radius="large">
             <RouterProvider router={router} />
-        </Provider>
-    </React.StrictMode>
+        </Theme>
+    </Provider>
 );

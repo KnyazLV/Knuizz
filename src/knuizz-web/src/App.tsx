@@ -1,14 +1,30 @@
-﻿import { Outlet } from 'react-router-dom';
+﻿// src/App.tsx
+import { Outlet } from 'react-router-dom';
+import Header from './components/layout/Header';
+// import Footer from './components/layout/Footer';
 
 export default function App() {
     return (
-        <div className="container mx-auto p-4">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold">Knuizz App</h1>
-            </header>
+        <>
+            <div
+                className="fixed inset-0 -z-10 w-full h-full"
+                style={{
+                    background: 'var(--slate-1)',
+                    backgroundImage: `
+            linear-gradient(to right, rgba(71,85,105,0.3) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(71,85,105,0.3) 1px, transparent 1px),
+            radial-gradient(circle at 50% 50%, rgba(139,92,246,0.15) 0%, transparent 70%)
+          `,
+                    backgroundSize: "32px 32px, 32px 32px, 100% 100%",
+                }}
+            />
+
+            <Header />
             <main>
                 <Outlet />
             </main>
-        </div>
+
+            {/* <Footer /> */}
+        </>
     );
 }
