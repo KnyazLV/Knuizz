@@ -165,8 +165,7 @@ public class QuizServiceTests {
             new() { QuestionText = "Question 2" }
         };
         var requestedCount = 2;
-
-        // Настраиваем мок буфера: при вызове GetQuestionsAsync он должен вернуть наш тестовый список.
+        
         _mockTriviaBuffer.Setup(b => b.GetQuestionsAsync(requestedCount, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedQuestions);
 
@@ -177,7 +176,6 @@ public class QuizServiceTests {
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Count, Is.EqualTo(expectedQuestions.Count));
         Assert.That(result, Is.EqualTo(expectedQuestions));
-        // Убедимся, что метод был вызван ровно один раз.
         _mockTriviaBuffer.Verify(b => b.GetQuestionsAsync(requestedCount, It.IsAny<CancellationToken>()), Times.Once);
     }
 
