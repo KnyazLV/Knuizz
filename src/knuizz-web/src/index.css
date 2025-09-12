@@ -40,3 +40,52 @@ a:hover  {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/*#region ShapeDivider*/
+.shape-divider {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: rotate(180deg);
+}
+
+.shape-divider svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 103px;
+}
+
+.shape-divider .shape-fill {
+    fill: #18191b;
+}
+
+/*#regionend*/
+
+/*#region AnimatedHeaded*/
+
+.ml2.rt-Heading {
+    line-height: 1.2;
+    margin: 0;
+}
+
+.ml2 .letter {
+    display: inline-block;
+    line-height: 1em;
+}
+
+/*#regionend*/
+
+@keyframes float {
+    0% {
+        transform: translateY(0px) rotate(var(--initial-rotation));
+    }
+    50% {
+        transform: translateY(-20px) rotate(var(--initial-rotation));
+    }
+    100% {
+        transform: translateY(0px) rotate(var(--initial-rotation));
+    }
+}

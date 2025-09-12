@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
 import { Theme } from '@radix-ui/themes';
 
+import 'animate.css';
 import '@radix-ui/themes/styles.css';
 import './index.css';
 

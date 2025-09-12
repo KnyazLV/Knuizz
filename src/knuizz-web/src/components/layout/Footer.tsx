@@ -3,7 +3,6 @@ import { Flex, Text } from '@radix-ui/themes';
 
 export default function Footer() {
     return (
-        // Используем solid-цвет фона из палитры Radix и ту же границу, что и в хедере
         <footer className="bg-[var(--color-background)] border-t border-[var(--slate-a6)]">
             <Flex
                 direction={{ initial: 'column', sm: 'row' }}
