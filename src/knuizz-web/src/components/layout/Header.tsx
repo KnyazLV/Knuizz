@@ -75,7 +75,7 @@ export default function Header() {
                             </Button>
                         </>
                     ) : (
-                        <Link to="/login">
+                        <Link to="/auth">
                             <Button>Войти</Button>
                         </Link>
                     )}

@@ -1,7 +1,38 @@
 ﻿// src/components/ui/AuthForm.tsx
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLoginMutation, useRegisterMutation } from '../../features/api/apiSlice';
+import {
+    Box, Button, Card, Flex, Heading, Text, TextField,
+    Link as RadixLink, Callout, Checkbox, Dialog
+} from '@radix-ui/themes';
+import { InfoCircledIcon, EyeOpenIcon, EyeClosedIcon } from '@radix-ui/react-icons';
+
+function parseApiError(err: unknown): string {
+    const defaultMessage = 'Произошла ошибка. Попробуйте снова.';
+
+    if (typeof err === 'object' && err !== null && 'data' in err) {
+        const apiError = err as { data?: { message?: string; errors?: Record<string, string[]> } | string };
+        const data = apiError.data;
+
+        if (typeof data === 'object' && data !== null) {
+            // A. Обработка ошибок валидации ASP.NET Core (`errors` field)
+            if (data.errors) {
+                // Собираем все сообщения из всех полей в одну строку
+                return Object.values(data.errors).flat().join(' ');
+            }
+            // B. Обработка кастомных ошибок (`message` field)
+            if (data.message) {
+                return data.message;
+            }
+        }
+        // C. Обработка случая, когда data - это просто строка
+        if (typeof data === 'string') {
+            return data;
+        }
+    }
+    return defaultMessage;
+}
 
 interface AuthFormProps {
     isLoginMode: boolean;
@@ -14,10 +45,24 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [rememberMe, setRememberMe] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
+    const [isSuccessDialogOpen, setSuccessDialogOpen] = useState(false);
 
     const [login, { isLoading: isLoggingIn }] = useLoginMutation();
     const [register, { isLoading: isRegistering }] = useRegisterMutation();
+
+    useEffect(() => {
+        if (errorMsg) {
+            const timer = setTimeout(() => {
+                setErrorMsg('');
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [errorMsg]);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -25,80 +70,132 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
 
         try {
             if (isLoginMode) {
-                await login({ email, password }).unwrap();
+                await login({ email, password, rememberMe }).unwrap();
                 navigate('/');
             } else {
                 await register({ username, email, password }).unwrap();
-                alert('Регистрация прошла успешно! Теперь вы можете войти.');
-                onToggleMode();
+                setSuccessDialogOpen(true);
             }
         } catch (err) {
-            const apiError = err as { data?: { message?: string }; status?: number };
-            const message = apiError.data?.message || 'Произошла ошибка. Попробуйте снова.';
+            const message = parseApiError(err);
             setErrorMsg(message);
         }
     };
 
     const isLoading = isLoggingIn || isRegistering;
 
+    const handleDialogClose = () => {
+        setSuccessDialogOpen(false);
+        onToggleMode();
+    };
+
     return (
-        <form onSubmit={handleSubmit} className="p-8 space-y-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-center text-2xl font-bold">
-                {isLoginMode ? 'Вход в аккаунт' : 'Создание аккаунта'}
-            </h2>
+        <>
+            <Card size="4" style={{ maxWidth: 450, width: '100%' }}>
+                <form onSubmit={handleSubmit}>
+                    <Flex direction="column" gap="4">
+                        <Heading align="center" size="7">
+                            {isLoginMode ? 'Вход в аккаунт' : 'Создание аккаунта'}
+                        </Heading>
 
-            {!isLoginMode && (
-                <input
-                    type="text"
-                    placeholder="Имя пользователя"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-            )}
+                        {!isLoginMode && (
+                            <Flex direction="column" gap="1">
+                                <TextField.Root
+                                    size="3"
+                                    placeholder="Имя пользователя"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    required
+                                />
+                                <Text size="1" color="gray">От 3 до 50 символов.</Text>
+                            </Flex>
+                        )}
 
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-            <input
-                type="password"
-                placeholder="Пароль"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
+                        <TextField.Root
+                            size="3"
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
 
-            {errorMsg && <p className="text-sm text-red-600">{errorMsg}</p>}
 
-            <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 disabled:bg-gray-400"
-            >
-                {isLoading
-                    ? 'Загрузка...'
-                    : isLoginMode
-                        ? 'Войти'
-                        : 'Зарегистрироваться'}
-            </button>
+                        <Flex direction="column" gap="1">
+                            <div className="password-field-wrapper">
+                                <TextField.Root
+                                    size="3"
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder="Пароль"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="password-toggle-button"
+                                    aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+                                >
+                                    {showPassword ? <EyeClosedIcon /> : <EyeOpenIcon />}
+                                </button>
+                            </div>
+                            {!isLoginMode && <Text size="1" color="gray">Не менее 6 символов.</Text>}
+                        </Flex>
 
-            <p className="text-sm text-center">
-                {isLoginMode ? 'Нет аккаунта?' : 'Уже есть аккаунт?'}
-                <button
-                    type="button"
-                    onClick={onToggleMode}
-                    className="font-medium text-blue-600 hover:underline ml-1"
-                >
-                    {isLoginMode ? 'Зарегистрироваться' : 'Войти'}
-                </button>
-            </p>
-        </form>
+                        <Box style={{
+                            transition: 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out',
+                            maxHeight: errorMsg ? '100px' : '0px',
+                            opacity: errorMsg ? 1 : 0,
+                            overflow: 'hidden',
+                        }}>
+                            {errorMsg && (
+                                <Callout.Root color="red" role="alert" size="1">
+                                    <Callout.Icon><InfoCircledIcon /></Callout.Icon>
+                                    <Callout.Text>{errorMsg}</Callout.Text>
+                                </Callout.Root>
+                            )}
+                        </Box>
+
+                        <Text as="label" size="2">
+                            <Flex gap="2" align="center">
+                                <Checkbox
+                                    checked={rememberMe}
+                                    onCheckedChange={(checked) => setRememberMe(Boolean(checked))}
+                                />
+                                Запомнить меня
+                            </Flex>
+                        </Text>
+
+                        <Button size="3" type="submit" disabled={isLoading} highContrast>
+                            {isLoading ? 'Загрузка...' : isLoginMode ? 'Войти' : 'Зарегистрироваться'}
+                        </Button>
+
+                        <Text size="2" align="center">
+                            {isLoginMode ? 'Нет аккаунта? ' : 'Уже есть аккаунт? '}
+                            <RadixLink onClick={onToggleMode} className="cursor-pointer ml-1">
+                                {isLoginMode ? 'Зарегистрироваться' : 'Войти'}
+                            </RadixLink>
+                        </Text>
+                    </Flex>
+                </form>
+            </Card>
+
+            <Dialog.Root open={isSuccessDialogOpen} onOpenChange={handleDialogClose}>
+                <Dialog.Content style={{ maxWidth: 450 }}>
+                    <Dialog.Title>Регистрация успешна</Dialog.Title>
+                    <Dialog.Description size="2" mb="4">
+                        Ваш аккаунт был успешно создан. Теперь вы можете войти, используя свои данные.
+                    </Dialog.Description>
+                    <Flex gap="3" mt="4" justify="end">
+                        <Dialog.Close>
+                            <Button variant="soft" color="gray">
+                                Отлично!
+                            </Button>
+                        </Dialog.Close>
+                    </Flex>
+                </Dialog.Content>
+            </Dialog.Root>
+        </>
     );
 }

@@ -11,6 +11,7 @@ interface RegisterRequest {
 interface LoginRequest {
     email: string;
     password: string;
+    rememberMe?: boolean;
 }
 
 interface LoginResponse {
