@@ -49,15 +49,19 @@ public class AuthService : IAuthService {
         if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             throw new ArgumentException("Invalid email or password.");
 
-        return GenerateJwtToken(user);
+        return GenerateJwtToken(user, loginDto.RememberMe);
     }
 
-    private string GenerateJwtToken(User user) {
+    private string GenerateJwtToken(User user, bool rememberMe)  {
         var tokenHandler = new JwtSecurityTokenHandler();
 
         var jwtKey = _configuration["Jwt:Key"];
         if (string.IsNullOrEmpty(jwtKey)) throw new InvalidOperationException("JWT Key is not configured");
         var key = Encoding.ASCII.GetBytes(jwtKey);
+        
+        var tokenLifetime = rememberMe 
+            ? TimeSpan.FromDays(30)
+            : TimeSpan.FromHours(2);
 
         var tokenDescriptor = new SecurityTokenDescriptor {
             Subject = new ClaimsIdentity(new[] {
@@ -65,7 +69,7 @@ public class AuthService : IAuthService {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Name, user.Username)
             }),
-            Expires = DateTime.UtcNow.AddDays(DomainConstants.Application.JWTTokenLifetimeDays),
+            Expires = DateTime.UtcNow.Add(tokenLifetime),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

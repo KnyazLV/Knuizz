@@ -62,7 +62,7 @@ public class AuthController : ControllerBase {
             return Ok(new LoginResponseDto { Token = token });
         }
         catch (ArgumentException ex) {
-            return Unauthorized(ex.Message);
+            return Unauthorized(new { message = ex.Message });
         }
     }
 }
