@@ -30,7 +30,7 @@ export const apiSlice = createApi({
             return headers;
         },
     }),
-    tagTypes: [],
+    tagTypes: ['Leaderboard', 'User'],
     endpoints: (builder) => ({
         login: builder.mutation<LoginResponse, LoginRequest>({
             query: (credentials) => ({

@@ -78,43 +78,33 @@ a:hover  {
 
 /*#regionend*/
 
-/* src/index.css */
+/*#region PasswordField*/
 
-/* ... */
-
-/* Контейнер для поля пароля, чтобы кнопка позиционировалась относительно него */
 .password-field-wrapper {
     position: relative;
     width: 100%;
 }
 
-/* Кнопка-переключатель внутри поля */
 .password-toggle-button {
     position: absolute;
-    right: 12px; /* Отступ от правого края */
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
-
-    /* Убираем все стили браузерной кнопки */
     background: transparent;
     border: none;
     padding: 0;
     cursor: pointer;
-
-    /* Центрируем иконку внутри */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    /* Цвет иконки из палитры Radix */
     color: var(--gray-11);
 }
 
-/* Дополнительно: не даем тексту залезать под кнопку */
 .password-field-wrapper input {
     padding-right: 40px !important;
 }
 
+/*#regionend*/
 
 @keyframes float {
     0% {
@@ -127,3 +117,24 @@ a:hover  {
         transform: translateY(0px) rotate(var(--initial-rotation));
     }
 }
+
+
+/*#region LeaderboardCrown*/
+
+.crown-glow {
+    animation: crown-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes crown-pulse {
+    from {
+        filter: drop-shadow(0 0 5px var(--amber-a11))
+        drop-shadow(0 0 10px var(--amber-a10))
+        drop-shadow(0 0 15px var(--amber-a9));
+    }
+    to {
+        filter: drop-shadow(0 0 2px var(--amber-a11))
+        drop-shadow(0 0 5px var(--amber-a10));
+    }
+}
+
+/*#endregion*/

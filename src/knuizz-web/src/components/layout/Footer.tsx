@@ -3,7 +3,13 @@ import { Flex, Text } from '@radix-ui/themes';
 
 export default function Footer() {
     return (
-        <footer className="bg-[var(--color-background)] border-t border-[var(--slate-a6)]">
+        <footer className="border-t border-[var(--slate-a6)]" style={{
+            position: "fixed",
+            left: 0,
+            bottom: 0,
+            width: "100%",
+            background: "var(--color-background)",
+        }}>
             <Flex
                 direction={{ initial: 'column', sm: 'row' }}
                 justify={{ initial: 'center', sm: 'between' }}

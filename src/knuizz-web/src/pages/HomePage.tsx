@@ -2,9 +2,10 @@
 import {Heading, Text, Button, Flex, Grid, Section, Link as RadixLink, Strong, Badge, Box} from "@radix-ui/themes"
 import { RocketIcon, CodeIcon, BarChartIcon, GitHubLogoIcon } from "@radix-ui/react-icons"
 import AnimatedHeading from "../components/ui/AnimatedHeading.tsx";
-import FloatingQuestionMark from "../components/ui/FloatingQuestionMark.tsx";
+import FloatingElement from "../components/ui/FloatingElement.tsx";
 import AnimatedCounter from "../components/ui/AnimatedCounter.tsx";
 import AnimatedWhenNotice from "../components/ui/AnimatedWhenNotice.tsx";
+import {FloatingElementType} from "../shared/types/FloatingElementType.ts";
 
 export default function HomePage() {
     return (
@@ -12,16 +13,16 @@ export default function HomePage() {
             <Section className="relative min-h-[calc(100vh_-_65px)] flex flex-col items-center justify-center text-center px-2">
 
                 <div className="animate__animated animate__fadeIn" style={{ animationDelay: '2.5s' }}>
-                    <FloatingQuestionMark size="8rem" top="15%" left="10%" rotation={-15} floatDuration="10s" />
+                    <FloatingElement type={FloatingElementType.QuestionMark} size="8rem" top="15%" left="10%" rotation={-15} floatDuration="10s" />
                 </div>
                 <div className="animate__animated animate__fadeIn" style={{ animationDelay: '3.0s' }}>
-                    <FloatingQuestionMark size="5rem" top="65%" left="20%" rotation={20} floatDuration="8s" />
+                    <FloatingElement type={FloatingElementType.QuestionMark} size="5rem" top="65%" left="20%" rotation={20} floatDuration="8s" />
                 </div>
                 <div className="animate__animated animate__fadeIn" style={{ animationDelay: '3.5s' }}>
-                    <FloatingQuestionMark size="10rem" top="25%" right="8%" rotation={10} floatDuration="12s" />
+                    <FloatingElement type={FloatingElementType.QuestionMark} size="10rem" top="25%" right="8%" rotation={10} floatDuration="12s" />
                 </div>
                 <div className="animate__animated animate__fadeIn" style={{ animationDelay: '4.0s' }}>
-                    <FloatingQuestionMark size="6rem" top="70%" right="18%" rotation={-25} floatDuration="9s" />
+                    <FloatingElement type={FloatingElementType.QuestionMark} size="6rem" top="70%" right="18%" rotation={-25} floatDuration="9s" />
                 </div>
 
                 <Text as="span" className="uppercase animate__animated animate__fadeInDown">

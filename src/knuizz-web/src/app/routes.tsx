@@ -5,23 +5,7 @@ import HomePage from '../pages/HomePage';
 import AuthPage from "../pages/AuthPage.tsx";
 import MainLayout from "../components/layout/MainLayout.tsx";
 import AuthLayout from '../components/layout/AuthLayout.tsx';
-
-// export const router = createBrowserRouter([
-//     {
-//         path: '/',
-//         element: <App />,
-//         children: [
-//             {
-//                 index: true,
-//                 element: <HomePage />,
-//             },
-//             {
-//                 path: 'login',
-//                 element: <AuthPage />,
-//             },
-//         ],
-//     },
-// ]);
+import LeaderboardPage from "../pages/LeaderboardPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -30,6 +14,10 @@ export const router = createBrowserRouter([
             {
                 path: '/',
                 element: <HomePage />,
+            },
+            {
+              path: '/leaderboard',
+              element: <LeaderboardPage />,
             },
         ],
     },
