@@ -117,6 +117,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI(options => { options.EnablePersistAuthorization(); });
+    app.UseReDoc(options =>
+    {
+        // to open ReDoc follow this path: http://localhost:5130/api-docs
+        options.DocumentTitle = "Knuizz API Docs";
+        options.SpecUrl = "/swagger/v1/swagger.json";
+    });
 }
 
 app.UseHttpsRedirection();

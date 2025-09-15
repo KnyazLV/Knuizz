@@ -1,29 +1,30 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-    <ItemGroup>
-        <!-- API Packages -->
-        <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0"/>
-        <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3"/>
-        <PackageVersion Include="CsvHelper" Version="33.1.0"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8"/>
-        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.8"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.8"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.8"/>
-        <PackageVersion Include="Moq.EntityFrameworkCore" Version="9.0.0.5"/>
-        <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
-        <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.4"/>
-        <PackageVersion Include="System.Text.Encoding.CodePages" Version="9.0.8"/>
-        <!-- Test Packages -->
-        <PackageVersion Include="coverlet.collector" Version="6.0.2"/>
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
-        <PackageVersion Include="Moq" Version="4.20.72"/>
-        <PackageVersion Include="NUnit" Version="4.2.2"/>
-        <PackageVersion Include="NUnit.Analyzers" Version="4.4.0"/>
-        <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0"/>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- API Packages -->
+    <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageVersion Include="CsvHelper" Version="33.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.8" />
+    <PackageVersion Include="Moq.EntityFrameworkCore" Version="9.0.0.5" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.ReDoc" Version="9.0.4" />
+    <PackageVersion Include="System.Text.Encoding.CodePages" Version="9.0.8" />
+    <!-- Test Packages -->
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="NUnit" Version="4.2.2" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
+  </ItemGroup>
 </Project>

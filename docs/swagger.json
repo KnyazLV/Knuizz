@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.4",
+  "openapi": "3.0.3",
   "info": {
     "title": "Knuizz API",
     "description": "API for quizzes \"Knuizz\"",
@@ -35,10 +35,64 @@
         },
         "responses": {
           "200": {
-            "description": "User name registered successfully."
+            "description": "User name registered successfully.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error in request (e.g., email or username already taken).",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Error in request (e.g., email or username already taken)."
+            "description": "Server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -1113,6 +1167,9 @@
           "password": {
             "minLength": 1,
             "type": "string"
+          },
+          "rememberMe": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1197,7 +1254,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "Question": {
         "type": "object",
@@ -1572,7 +1629,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ]
 }
