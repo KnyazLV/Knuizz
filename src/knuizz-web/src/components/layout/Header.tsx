@@ -1,86 +1,95 @@
 // src/components/layout/Header.tsx
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Flex, Text, Button, SegmentedControl } from '@radix-ui/themes';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { logout } from '../../features/auth/authSlice';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Flex, Button, SegmentedControl, IconButton } from "@radix-ui/themes";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { logout } from "../../features/auth/authSlice";
 
-import logo from '/logo.svg';
+import logo from "/logo.svg";
+import { ExitIcon } from "@radix-ui/react-icons";
 
 export default function Header() {
-    const [isScrolled, setIsScrolled] = useState(false);
-    const dispatch = useAppDispatch();
-    const navigate = useNavigate();
-    const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const goHome = () => {
+    navigate("/profile");
+  };
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate('/');
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
     };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
-    return (
-        <header
-            className={`sticky z-50 transition-all duration-300 ${
-                isScrolled ? 'backdrop-blur-lg' : ''
-            }`}
-            style={{ top: 0 }}
-        >
-            <Flex
-                justify="between"
-                align="center"
-                p="4"
-                className={`transition-colors duration-300 ${
-                    isScrolled
-                        ? 'bg-[var(--color-background)] border-b border-[var(--slate-a6)]'
-                        : 'bg-transparent border-b border-transparent'
-                }`}
-            >
-                <Link to="/">
-                    <img src={logo} alt="Knuizz Logo" className="h-8 w-auto" />
-                </Link>
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
 
-                <Flex gap="4" align="center">
-                    <Link
-                        to="/leaderboard"
-                        className="text-base font-semibold uppercase transition-all duration-300 border-b-2 border-transparent hover:border-[var(--accent-9)]"
-                        style={{ color: 'white' }}
-                    >
-                        Leaderboard
-                    </Link>
-                    <SegmentedControl.Root
-                        style={{ background: 'var(--sand-1)' }}
-                        defaultValue="ru"
-                    >
-                        <SegmentedControl.Item value="ru">RU</SegmentedControl.Item>
-                        <SegmentedControl.Item value="en">EN</SegmentedControl.Item>
-                    </SegmentedControl.Root>
+  return (
+    <header
+      className={`sticky z-50 transition-all duration-300 ${
+        isScrolled ? "backdrop-blur-lg" : ""
+      }`}
+      style={{ top: 0 }}
+    >
+      <Flex
+        justify="between"
+        align="center"
+        p="4"
+        className={`transition-colors duration-300 ${
+          isScrolled
+            ? "bg-[var(--color-background)] border-b border-[var(--slate-a6)]"
+            : "bg-transparent border-b border-transparent"
+        }`}
+      >
+        <Link to="/">
+          <img src={logo} alt="Knuizz Logo" className="h-8 w-auto" />
+        </Link>
 
-                    {isAuthenticated ? (
-                        <>
-                            <Link to="/profile">
-                                <Text className="hover:underline">Профиль</Text>
-                            </Link>
-                            <Button variant="soft" color="red" onClick={handleLogout}>
-                                Выйти
-                            </Button>
-                        </>
-                    ) : (
-                        <Link to="/auth">
-                            <Button>Войти</Button>
-                        </Link>
-                    )}
-                </Flex>
-            </Flex>
-        </header>
-    );
+        <Flex gap="4" align="center">
+          <Link
+            to="/leaderboard"
+            className="text-base font-semibold uppercase transition-all duration-300 border-b-2 border-transparent hover:border-[var(--accent-9)]"
+            style={{ color: "white" }}
+          >
+            Таблица Лидеров
+          </Link>
+          <SegmentedControl.Root
+            style={{ background: "var(--sand-1)" }}
+            defaultValue="ru"
+          >
+            <SegmentedControl.Item value="ru">RU</SegmentedControl.Item>
+            <SegmentedControl.Item value="en">EN</SegmentedControl.Item>
+          </SegmentedControl.Root>
+
+          {isAuthenticated ? (
+            <>
+              <Flex gap="1">
+                <Button variant="soft" onClick={goHome}>
+                  Профиль
+                </Button>
+                {/*<Button variant="surface" color="red" onClick={handleLogout}>*/}
+                {/*  Выйти*/}
+                {/*</Button>*/}
+                <IconButton variant="soft" color="red" onClick={handleLogout}>
+                  <ExitIcon></ExitIcon>
+                </IconButton>
+              </Flex>
+            </>
+          ) : (
+            <Link to="/auth">
+              <Button>Войти</Button>
+            </Link>
+          )}
+        </Flex>
+      </Flex>
+    </header>
+  );
 }
