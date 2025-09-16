@@ -8,4 +8,6 @@ public interface IUserService {
     Task<bool> UpdateUserProfileAsync(Guid userId, UpdateProfileDto profileDto);
     Task<UserStatistics?> GetUserStatisticsAsync(Guid userId);
     Task<List<LeaderboardEntryDto>> GetLeaderboardAsync(int count);
+    Task<int> GetUserRankAsync(Guid userId);
+    Task<IEnumerable<MatchHistoryDto>> GetUserMatchHistoryAsync(Guid userId, int count = 5);
 }

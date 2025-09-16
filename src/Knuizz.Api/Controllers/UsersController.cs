@@ -114,4 +114,44 @@ public class UsersController : ControllerBase {
         var leaderboard = await _userService.GetLeaderboardAsync(count);
         return Ok(leaderboard);
     }
+
+    /// <summary>
+    ///     Retrieves the rank of the currently authenticated user. (Authorization required)
+    /// </summary>
+    /// <returns>The user's rank in the leaderboard.</returns>
+    /// <response code="200">Returns the user's rank.</response>
+    /// <response code="401">The user is not authorized.</response>
+    [HttpGet("profile/rank")]
+    [Authorize]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetMyRank() {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString)) return Unauthorized();
+
+        var userId = Guid.Parse(userIdString);
+        var rank = await _userService.GetUserRankAsync(userId);
+
+        return Ok(rank);
+    }
+
+    // highlight-start
+    /// <summary>
+    ///     Retrieves the match history for the currently authenticated user. (Authorization required)
+    /// </summary>
+    /// <param name="count">Number of recent matches to retrieve (default 5).</param>
+    /// <returns>A list of recent matches.</returns>
+    [HttpGet("profile/match-history")]
+    [Authorize]
+    [ProducesResponseType(typeof(IEnumerable<MatchHistoryDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetMyMatchHistory([FromQuery] int count = 5) {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString)) return Unauthorized();
+
+        var userId = Guid.Parse(userIdString);
+        var history = await _userService.GetUserMatchHistoryAsync(userId, count);
+
+        return Ok(history);
+    }
 }

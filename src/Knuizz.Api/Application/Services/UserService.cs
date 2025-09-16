@@ -43,8 +43,10 @@ public class UserService : IUserService {
 
     public async Task<List<LeaderboardEntryDto>> GetLeaderboardAsync(int count) {
         if (count > DomainConstants.Leaderboard.MaxTopPlayersLimit) count = DomainConstants.Leaderboard.MaxTopPlayersLimit;
+
         var leaderboardEntries = await _context.UserStatistics
             .OrderByDescending(s => s.Rating)
+            .ThenBy(s => s.User.Username)
             .Take(count)
             .Select(s => new LeaderboardEntryDto {
                 UserId = s.UserId,
@@ -56,5 +58,43 @@ public class UserService : IUserService {
             .ToListAsync();
 
         return leaderboardEntries;
+    }
+
+
+    public async Task<int> GetUserRankAsync(Guid userId) {
+        var currentUserStats = await _context.UserStatistics
+            .Where(s => s.UserId == userId)
+            .Select(s => new { s.Rating, s.User.Username })
+            .FirstOrDefaultAsync();
+
+        if (currentUserStats == null) return 0;
+
+        var playersWithHigherRating = await _context.UserStatistics
+            .CountAsync(s => s.Rating > currentUserStats.Rating);
+
+        var playersWithSameRatingAndBetterName = await _context.UserStatistics
+            .CountAsync(s => s.Rating == currentUserStats.Rating &&
+                             s.User.Username.CompareTo(currentUserStats.Username) < 0);
+        var rank = playersWithHigherRating + playersWithSameRatingAndBetterName + 1;
+
+        return rank;
+    }
+
+    public async Task<IEnumerable<MatchHistoryDto>> GetUserMatchHistoryAsync(Guid userId, int count = 5) {
+        var history = await _context.MatchHistories
+            .Where(m => m.UserId == userId)
+            .Where(m => m.UserQuizId == null) 
+            .OrderByDescending(m => m.CompletedAt)
+            .Take(count)
+            .Select(m => new MatchHistoryDto {
+                Score = m.Score,
+                DurationSeconds = m.DurationSeconds,
+                CompletedAt = m.CompletedAt,
+                SourceName = m.SourceName
+            })
+            .AsNoTracking()
+            .ToListAsync();
+
+        return history;
     }
 }
