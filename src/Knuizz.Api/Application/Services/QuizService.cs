@@ -48,36 +48,37 @@ public class QuizService : IQuizService {
         await using var transaction = await _context.Database.BeginTransactionAsync();
 
         try {
+            var userStats = await _context.UserStatistics.FindAsync(userId);
+            var ratingChange = 0;
+
+            if (userStats != null && resultDto.SourceName is "trivia_api" or "wwtbm_ru" or "wwtbm_en") {
+                ratingChange = CalculateRatingChange(resultDto.Score, resultDto.TotalQuestions, userStats.Rating);
+
+                userStats.TotalGamesPlayed++;
+                userStats.TotalCorrectAnswers += resultDto.Score;
+                userStats.TotalAnswers += resultDto.TotalQuestions;
+                userStats.Rating += ratingChange;
+                userStats.CurrentExperience += resultDto.Score;
+
+                var requiredExp = ExperienceForNextLevel(userStats.Level);
+                while (userStats.CurrentExperience >= requiredExp) {
+                    userStats.Level++;
+                    userStats.CurrentExperience -= requiredExp;
+                    requiredExp = ExperienceForNextLevel(userStats.Level);
+                }
+            }
+
             var matchHistory = new MatchHistory {
                 UserId = userId,
                 Score = resultDto.Score,
                 DurationSeconds = resultDto.DurationSeconds,
                 SourceName = resultDto.SourceName,
                 UserQuizId = resultDto.UserQuizId,
-                CompletedAt = DateTime.UtcNow
+                CompletedAt = DateTime.UtcNow,
+                TotalQuestions = resultDto.TotalQuestions,
+                RatingChange = ratingChange
             };
             _context.MatchHistories.Add(matchHistory);
-
-            // Refactor this
-            var isOfficialSource = resultDto.SourceName is "trivia_api" or "wwtbm_ru" or "wwtbm_en";
-            if (isOfficialSource) {
-                var userStats = await _context.UserStatistics.FindAsync(userId);
-                if (userStats != null) {
-                    userStats.TotalGamesPlayed++;
-                    userStats.TotalCorrectAnswers += resultDto.Score;
-                    userStats.TotalAnswers += resultDto.TotalQuestions;
-
-                    userStats.Rating += CalculateRatingChange(resultDto.Score, resultDto.TotalQuestions, userStats.Rating);
-                    userStats.CurrentExperience += resultDto.Score; // Experience = count of correct answers
-
-                    var requiredExp = ExperienceForNextLevel(userStats.Level);
-                    while (userStats.CurrentExperience >= requiredExp) {
-                        userStats.Level++;
-                        userStats.CurrentExperience -= requiredExp;
-                        requiredExp = ExperienceForNextLevel(userStats.Level);
-                    }
-                }
-            }
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -88,6 +89,51 @@ public class QuizService : IQuizService {
             throw;
         }
     }
+
+    // public async Task SubmitMatchResultAsync(Guid userId, SubmitMatchResultDto resultDto) {
+    //     await using var transaction = await _context.Database.BeginTransactionAsync();
+    //
+    //     try {
+    //         var matchHistory = new MatchHistory {
+    //             UserId = userId,
+    //             Score = resultDto.Score,
+    //             DurationSeconds = resultDto.DurationSeconds,
+    //             SourceName = resultDto.SourceName,
+    //             UserQuizId = resultDto.UserQuizId,
+    //             CompletedAt = DateTime.UtcNow
+    //         };
+    //         _context.MatchHistories.Add(matchHistory);
+    //
+    //         // Refactor this
+    //         var isOfficialSource = resultDto.SourceName is "trivia_api" or "wwtbm_ru" or "wwtbm_en";
+    //         if (isOfficialSource) {
+    //             var userStats = await _context.UserStatistics.FindAsync(userId);
+    //             if (userStats != null) {
+    //                 userStats.TotalGamesPlayed++;
+    //                 userStats.TotalCorrectAnswers += resultDto.Score;
+    //                 userStats.TotalAnswers += resultDto.TotalQuestions;
+    //
+    //                 userStats.Rating += CalculateRatingChange(resultDto.Score, resultDto.TotalQuestions, userStats.Rating);
+    //                 userStats.CurrentExperience += resultDto.Score; // Experience = count of correct answers
+    //
+    //                 var requiredExp = ExperienceForNextLevel(userStats.Level);
+    //                 while (userStats.CurrentExperience >= requiredExp) {
+    //                     userStats.Level++;
+    //                     userStats.CurrentExperience -= requiredExp;
+    //                     requiredExp = ExperienceForNextLevel(userStats.Level);
+    //                 }
+    //             }
+    //         }
+    //
+    //         await _context.SaveChangesAsync();
+    //         await transaction.CommitAsync();
+    //     }
+    //     catch (Exception ex) {
+    //         await transaction.RollbackAsync();
+    //         _logger.LogError(ex, "Failed to submit match result for user {UserId}", userId);
+    //         throw;
+    //     }
+    // }
 
     //#endregion
 

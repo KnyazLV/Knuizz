@@ -82,12 +82,14 @@ public class UserService : IUserService {
 
     public async Task<IEnumerable<MatchHistoryDto>> GetUserMatchHistoryAsync(Guid userId, int count = 5) {
         var history = await _context.MatchHistories
-            .Where(m => m.UserId == userId)
-            .Where(m => m.UserQuizId == null) 
+            .Where(m => m.UserId == userId && m.UserQuizId == null)
             .OrderByDescending(m => m.CompletedAt)
             .Take(count)
             .Select(m => new MatchHistoryDto {
+                Id = m.Id,
                 Score = m.Score,
+                TotalQuestions = m.TotalQuestions,
+                RatingChange = m.RatingChange,
                 DurationSeconds = m.DurationSeconds,
                 CompletedAt = m.CompletedAt,
                 SourceName = m.SourceName
