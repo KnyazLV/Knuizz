@@ -6,6 +6,7 @@ public class UserQuiz {
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public bool IsPublished { get; set; }
 
     // Navigation properties
     public User Author { get; set; } = null!;

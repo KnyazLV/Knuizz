@@ -8,6 +8,7 @@ public class CreateQuizDto {
     public required string Title { get; set; }
 
     public string? Description { get; set; }
+    public bool IsPublished { get; set; } 
 
     [Required]
     [MinLength(1)] // Quiz must have at least one question

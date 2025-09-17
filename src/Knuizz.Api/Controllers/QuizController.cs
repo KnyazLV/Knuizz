@@ -160,6 +160,42 @@ public class QuizController : ControllerBase {
     }
 
     /// <summary>
+    ///     Updates the publication status of a quiz. (Authorization required)
+    /// </summary>
+    /// <remarks>
+    ///     Only the author of the quiz can change its publication status.
+    /// </remarks>
+    /// <param name="id">ID of the updated quiz.</param>
+    /// <param name="updateDto">DTO with the new publication status.</param>
+    /// <returns>Empty response upon success.</returns>
+    /// <response code="204">Status successfully updated.</response>
+    /// <response code="401">The user is not authorized.</response>
+    /// <response code="403">The user is not the author of this quiz.</response>
+    /// <response code="404">The quiz has not been found.</response>
+    [HttpPatch("{id:guid}/publish")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdatePublicationStatus(Guid id, [FromBody] UpdatePublicationStatusDto updateDto) {
+        var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdString)) return Unauthorized("User identifier is missing in token.");
+
+        var userId = Guid.Parse(userIdString);
+
+        try {
+            var success = await _quizService.UpdatePublicationStatusAsync(id, userId, updateDto.IsPublished);
+            if (!success) return NotFound();
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException ex) {
+            return Forbid(ex.Message);
+        }
+    }
+
+
+    /// <summary>
     ///     Deletes a user quiz. (Authorization required)
     /// </summary>
     /// <remarks>

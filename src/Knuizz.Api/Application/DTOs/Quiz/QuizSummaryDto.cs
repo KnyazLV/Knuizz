@@ -7,4 +7,5 @@ public class QuizSummaryDto {
     public required string AuthorName { get; set; }
     public int QuestionCount { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool IsPublished { get; set; }
 }

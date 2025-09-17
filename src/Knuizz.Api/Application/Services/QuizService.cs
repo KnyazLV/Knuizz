@@ -8,7 +8,7 @@ namespace Knuizz.Api.Application.Services;
 public class QuizService : IQuizService {
     private readonly KnuizzDbContext _context;
     private readonly ILogger<QuizService> _logger;
-    private readonly IServiceProvider _serviceProvider; // Для "запасного варианта"
+    private readonly IServiceProvider _serviceProvider;
     private readonly ITriviaQuestionBuffer _triviaBuffer;
 
     public QuizService(
@@ -90,51 +90,6 @@ public class QuizService : IQuizService {
         }
     }
 
-    // public async Task SubmitMatchResultAsync(Guid userId, SubmitMatchResultDto resultDto) {
-    //     await using var transaction = await _context.Database.BeginTransactionAsync();
-    //
-    //     try {
-    //         var matchHistory = new MatchHistory {
-    //             UserId = userId,
-    //             Score = resultDto.Score,
-    //             DurationSeconds = resultDto.DurationSeconds,
-    //             SourceName = resultDto.SourceName,
-    //             UserQuizId = resultDto.UserQuizId,
-    //             CompletedAt = DateTime.UtcNow
-    //         };
-    //         _context.MatchHistories.Add(matchHistory);
-    //
-    //         // Refactor this
-    //         var isOfficialSource = resultDto.SourceName is "trivia_api" or "wwtbm_ru" or "wwtbm_en";
-    //         if (isOfficialSource) {
-    //             var userStats = await _context.UserStatistics.FindAsync(userId);
-    //             if (userStats != null) {
-    //                 userStats.TotalGamesPlayed++;
-    //                 userStats.TotalCorrectAnswers += resultDto.Score;
-    //                 userStats.TotalAnswers += resultDto.TotalQuestions;
-    //
-    //                 userStats.Rating += CalculateRatingChange(resultDto.Score, resultDto.TotalQuestions, userStats.Rating);
-    //                 userStats.CurrentExperience += resultDto.Score; // Experience = count of correct answers
-    //
-    //                 var requiredExp = ExperienceForNextLevel(userStats.Level);
-    //                 while (userStats.CurrentExperience >= requiredExp) {
-    //                     userStats.Level++;
-    //                     userStats.CurrentExperience -= requiredExp;
-    //                     requiredExp = ExperienceForNextLevel(userStats.Level);
-    //                 }
-    //             }
-    //         }
-    //
-    //         await _context.SaveChangesAsync();
-    //         await transaction.CommitAsync();
-    //     }
-    //     catch (Exception ex) {
-    //         await transaction.RollbackAsync();
-    //         _logger.LogError(ex, "Failed to submit match result for user {UserId}", userId);
-    //         throw;
-    //     }
-    // }
-
     //#endregion
 
     //#region User's Quizzes
@@ -151,6 +106,7 @@ public class QuizService : IQuizService {
                 AuthorId = q.AuthorId,
                 AuthorName = q.Author.Username,
                 CreatedAt = q.CreatedAt,
+                IsPublished = q.IsPublished,
                 Questions = q.Questions.Select(p => new QuestionDto {
                     Id = p.Id,
                     QuestionText = p.QuestionText,
@@ -171,6 +127,7 @@ public class QuizService : IQuizService {
             Title = quizDto.Title,
             Description = quizDto.Description,
             AuthorId = authorId,
+            IsPublished = quizDto.IsPublished,
             Questions = quizDto.Questions.Select(q => new Question {
                 QuestionText = q.QuestionText,
                 Options = q.Options,
@@ -193,6 +150,7 @@ public class QuizService : IQuizService {
 
         quiz.Title = quizDto.Title;
         quiz.Description = quizDto.Description;
+        quiz.IsPublished = quizDto.IsPublished;
 
         _context.Questions.RemoveRange(quiz.Questions);
 
@@ -228,16 +186,18 @@ public class QuizService : IQuizService {
                 Description = q.Description,
                 AuthorName = q.Author.Username,
                 QuestionCount = q.Questions.Count,
-                CreatedAt = q.CreatedAt
+                CreatedAt = q.CreatedAt,
+                IsPublished = q.IsPublished
             })
             .OrderByDescending(q => q.CreatedAt)
             .ToListAsync();
     }
 
     public async Task<List<QuizSummaryDto>> SearchQuizzesByTitleAsync(string titleQuery) {
+        var lowerCaseQuery = titleQuery.ToLower();
         var query = _context.UserQuizzes
             .AsNoTracking()
-            .Where(q => q.Title.Contains(titleQuery, StringComparison.OrdinalIgnoreCase))
+            .Where(q => q.IsPublished && q.Title.ToLower().Contains(lowerCaseQuery))
             .Include(q => q.Author)
             .Select(q => new QuizSummaryDto {
                 Id = q.Id,
@@ -245,12 +205,22 @@ public class QuizService : IQuizService {
                 Description = q.Description,
                 AuthorName = q.Author.Username,
                 QuestionCount = q.Questions.Count,
-                CreatedAt = q.CreatedAt
+                CreatedAt = q.CreatedAt,
+                IsPublished = q.IsPublished
             })
             .OrderByDescending(q => q.CreatedAt)
             .Take(20);
 
         return await query.ToListAsync();
+    }
+
+    public async Task<bool> UpdatePublicationStatusAsync(Guid quizId, Guid userId, bool isPublished) {
+        var quiz = await _context.UserQuizzes.FirstOrDefaultAsync(q => q.Id == quizId);
+        if (quiz == null) return false;
+        if (quiz.AuthorId != userId) throw new UnauthorizedAccessException("You are not the author of this quiz.");
+        quiz.IsPublished = isPublished;
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     /// <summary>

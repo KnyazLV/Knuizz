@@ -12,4 +12,5 @@ public interface IQuizService {
     Task<bool> DeleteUserQuizAsync(Guid quizId, Guid userId);
     Task<List<QuizSummaryDto>> GetQuizzesByAuthorAsync(Guid authorId);
     Task<List<QuizSummaryDto>> SearchQuizzesByTitleAsync(string titleQuery);
+    Task<bool> UpdatePublicationStatusAsync(Guid quizId, Guid userId, bool isPublished);
 }

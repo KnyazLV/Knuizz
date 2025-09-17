@@ -7,5 +7,6 @@ public class QuizDetailDto {
     public Guid AuthorId { get; set; }
     public required string AuthorName { get; set; }
     public DateTime CreatedAt { get; set; }
+    public bool IsPublished { get; set; }
     public required List<QuestionDto> Questions { get; set; }
 }
