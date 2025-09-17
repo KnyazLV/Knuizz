@@ -15,7 +15,11 @@ import type {
   UserStatistics,
   LeaderboardEntry,
   MatchHistory,
-} from "../../shared/types/api/api";
+  QuizSummary,
+  CreateQuizRequest,
+  QuizDetails,
+  UpdateQuizRequest,
+} from "../../shared/types/api";
 import type { RootState } from "../../app/store";
 import { logout } from "../auth/authSlice.ts";
 
@@ -48,8 +52,16 @@ const baseQueryWithReauth: BaseQueryFn<
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Leaderboard", "User", "Profile", "UserRank"],
+  tagTypes: [
+    "Leaderboard",
+    "User",
+    "Profile",
+    "UserRank",
+    "UserQuiz",
+    "MatchHistory",
+  ],
   endpoints: (builder) => ({
+    //Auth
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: (credentials) => ({
         url: "/Auth/login",
@@ -64,6 +76,7 @@ export const apiSlice = createApi({
         body: userInfo,
       }),
     }),
+    // User info
     getUserProfile: builder.query<UserProfile, void>({
       query: () => "/Users/profile",
       providesTags: ["Profile"],
@@ -88,6 +101,7 @@ export const apiSlice = createApi({
         { type: "Leaderboard", id: "LIST" },
       ],
     }),
+    // LeaderBoard and History
     getLeaderboard: builder.query<LeaderboardEntry[], number | void>({
       query: (count = 100) => `Users/leaderboard?count=${count}`,
       providesTags: (result) =>
@@ -105,6 +119,88 @@ export const apiSlice = createApi({
       query: (count = 5) => `Users/profile/match-history?count=${count}`,
       providesTags: ["MatchHistory"],
     }),
+    // Quizzes
+    getUserQuizzes: builder.query<QuizSummary[], string>({
+      query: (authorId) => `/quizzes/by-author/${authorId}`,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "UserQuiz" as const, id })),
+              { type: "UserQuiz", id: "LIST" },
+            ]
+          : [{ type: "UserQuiz", id: "LIST" }],
+    }),
+    getQuizById: builder.query<QuizDetails, string>({
+      query: (id) => `/quizzes/${id}`,
+      providesTags: (_result, _error, id) => [{ type: "UserQuiz", id }],
+    }),
+    createQuiz: builder.mutation<void, CreateQuizRequest>({
+      query: (quizData) => ({
+        url: "/quizzes",
+        method: "POST",
+        body: quizData,
+      }),
+      invalidatesTags: [{ type: "UserQuiz", id: "LIST" }],
+    }),
+    updateQuiz: builder.mutation<void, UpdateQuizRequest>({
+      query: ({ id, data }) => ({
+        url: `/quizzes/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "UserQuiz", id: "LIST" },
+        { type: "UserQuiz", id },
+      ],
+    }),
+    updateQuizPublication: builder.mutation<
+      void,
+      { id: string; isPublished: boolean }
+    >({
+      query: ({ id, isPublished }) => ({
+        url: `/quizzes/${id}/publish`,
+        method: "PATCH",
+        body: { isPublished },
+      }),
+      async onQueryStarted(
+        { id, isPublished },
+        { dispatch, queryFulfilled, getState },
+      ) {
+        const profileResult =
+          apiSlice.endpoints.getUserProfile.select()(getState());
+
+        let userId;
+        if (profileResult.isSuccess) {
+          userId = profileResult.data.id;
+        }
+        if (!userId) {
+          return;
+        }
+
+        const patchResult = dispatch(
+          apiSlice.util.updateQueryData("getUserQuizzes", userId, (draft) => {
+            const quiz = draft.find((q) => q.id === id);
+            if (quiz) {
+              quiz.isPublished = isPublished;
+            }
+          }),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: (_result, _error, { id }) => [{ type: "UserQuiz", id }],
+    }),
+
+    deleteQuiz: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/quizzes/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "UserQuiz", id: "LIST" }],
+    }),
   }),
 });
 
@@ -117,4 +213,10 @@ export const {
   useGetMatchHistoryQuery,
   useGetLeaderboardQuery,
   useGetUserRankQuery,
+  useGetUserQuizzesQuery,
+  useCreateQuizMutation,
+  useGetQuizByIdQuery,
+  useUpdateQuizMutation,
+  useUpdateQuizPublicationMutation,
+  useDeleteQuizMutation,
 } = apiSlice;

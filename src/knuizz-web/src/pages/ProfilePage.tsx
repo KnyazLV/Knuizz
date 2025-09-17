@@ -23,6 +23,7 @@ import {
   Badge,
 } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
+import UserQuizzesTable from "../components/ui/UserQuizzesTable";
 import EditableUsername from "../components/ui/EditableUsername";
 import toast, { Toaster } from "react-hot-toast";
 import DonutChart from "../components/ui/DonutChart";
@@ -275,7 +276,11 @@ export default function ProfilePage() {
           </Flex>
         </Card>
       </Flex>
-      {/* Ниже будет блок где будут представлены пользовательские викторины данного игрока */}
+      {userId && (
+        <Box className="w-full max-w-4xl mt-4">
+          <UserQuizzesTable userId={userId} />
+        </Box>
+      )}
     </Flex>
   );
 }
