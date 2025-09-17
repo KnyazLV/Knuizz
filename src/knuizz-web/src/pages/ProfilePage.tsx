@@ -27,6 +27,7 @@ import EditableUsername from "../components/ui/EditableUsername";
 import toast, { Toaster } from "react-hot-toast";
 import DonutChart from "../components/ui/DonutChart";
 import crownImage from "../shared/assets/crown.png";
+import type { MatchHistory } from "../shared/types/api/api.ts";
 
 function experienceForNextLevel(currentLevel: number): number {
   const baseExperience = 50.0;
@@ -184,9 +185,30 @@ export default function ProfilePage() {
             <Heading>Последние матчи</Heading>
             {matchHistory.length > 0 ? (
               <Table.Root variant="surface" size="1" className="w-full">
+                <Table.Header>
+                  <Table.ColumnHeaderCell>Время</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Источник</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell justify="center">
+                    Ответы
+                  </Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell justify="end">
+                    Рейтинг
+                  </Table.ColumnHeaderCell>
+                </Table.Header>
                 <Table.Body>
-                  {matchHistory.map((match, index) => (
-                    <Table.Row key={index}>
+                  {matchHistory.map((match: MatchHistory) => (
+                    <Table.Row key={match.id}>
+                      <Table.Cell justify="start">
+                        <Text size="1" color="gray">
+                          {new Intl.DateTimeFormat("ru-RU", {
+                            day: "numeric",
+                            month: "long",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          }).format(new Date(match.completedAt))}
+                        </Text>
+                      </Table.Cell>
                       <Table.Cell>
                         <Badge
                           color={
@@ -199,11 +221,17 @@ export default function ProfilePage() {
                         </Badge>
                       </Table.Cell>
                       <Table.Cell justify="center">
-                        <Text weight="bold">{match.score} очков</Text>
+                        <Text weight="bold">
+                          {match.score} / {match.totalQuestions}
+                        </Text>
                       </Table.Cell>
                       <Table.Cell justify="end">
-                        <Text size="1" color="gray">
-                          {new Date(match.completedAt).toLocaleDateString()}
+                        <Text
+                          weight="bold"
+                          color={match.ratingChange >= 0 ? "green" : "red"}
+                        >
+                          {match.ratingChange > 0 ? "+" : ""}
+                          {match.ratingChange}
                         </Text>
                       </Table.Cell>
                     </Table.Row>

@@ -43,7 +43,10 @@ export interface LeaderboardEntry {
 }
 
 export interface MatchHistory {
+  id: number;
   score: number;
+  totalQuestions: number;
+  ratingChange: number;
   durationSeconds: number;
   completedAt: string;
   sourceName: string;
