@@ -25,9 +25,11 @@ import AnimatedWhenNotice from "../components/ui/AnimatedWhenNotice.tsx";
 import { FloatingElementType } from "../shared/types/FloatingElementType.ts";
 import GameModeSelector from "../components/ui/GameModeSelector.tsx";
 import { useState } from "react";
+import ReminderPopup from "../components/ui/ReminderPopup.tsx";
 
 export default function HomePage() {
   const [showLobby, setShowLobby] = useState(false);
+
   return (
     <>
       {showLobby ? (
@@ -286,6 +288,7 @@ export default function HomePage() {
           </Flex>
         </div>
       </Section>
+      <ReminderPopup />
     </>
   );
 }
