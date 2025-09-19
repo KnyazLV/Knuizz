@@ -43,7 +43,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
   if (result.error && result.error.status === 401) {
     api.dispatch(logout());
-    window.location.href = "/auth";
+    // window.location.href = "/auth";
   }
 
   return result;
@@ -201,6 +201,10 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: [{ type: "UserQuiz", id: "LIST" }],
     }),
+    searchPublicQuizzes: builder.query<QuizSummary[], string>({
+      query: (searchTerm) =>
+        `/quizzes/search?query=${encodeURIComponent(searchTerm)}`,
+    }),
   }),
 });
 
@@ -219,4 +223,5 @@ export const {
   useUpdateQuizMutation,
   useUpdateQuizPublicationMutation,
   useDeleteQuizMutation,
+  useSearchPublicQuizzesQuery,
 } = apiSlice;

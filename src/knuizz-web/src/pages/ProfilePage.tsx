@@ -28,7 +28,7 @@ import EditableUsername from "../components/ui/EditableUsername";
 import toast, { Toaster } from "react-hot-toast";
 import DonutChart from "../components/ui/DonutChart";
 import crownImage from "../shared/assets/crown.png";
-import type { MatchHistory } from "../shared/types/api/api.ts";
+import type { MatchHistory } from "../shared/types/api";
 
 function experienceForNextLevel(currentLevel: number): number {
   const baseExperience = 50.0;
