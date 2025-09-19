@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   useLoginMutation,
   useRegisterMutation,
-} from "../../features/api/apiSlice";
+} from "../../../features/api/apiSlice.ts";
 import {
   Box,
   Button,

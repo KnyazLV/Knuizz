@@ -23,8 +23,8 @@ import {
   Badge,
 } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import UserQuizzesTable from "../components/ui/UserQuizzesTable";
-import EditableUsername from "../components/ui/EditableUsername";
+import UserQuizzesTable from "../components/feature/profile/UserQuizzesTable.tsx";
+import EditableUsername from "../components/feature/profile/EditableUsername.tsx";
 import toast, { Toaster } from "react-hot-toast";
 import DonutChart from "../components/ui/DonutChart";
 import crownImage from "../shared/assets/crown.png";

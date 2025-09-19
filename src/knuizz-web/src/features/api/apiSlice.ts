@@ -19,6 +19,7 @@ import type {
   CreateQuizRequest,
   QuizDetails,
   UpdateQuizRequest,
+  Question,
 } from "../../shared/types/api";
 import type { RootState } from "../../app/store";
 import { logout } from "../auth/authSlice.ts";
@@ -205,6 +206,13 @@ export const apiSlice = createApi({
       query: (searchTerm) =>
         `/quizzes/search?query=${encodeURIComponent(searchTerm)}`,
     }),
+    getQuestionsFromSource: builder.query<
+      Question[],
+      { source: string; count?: number }
+    >({
+      query: ({ source, count = 20 }) =>
+        `/quizzes/source/${source}?count=${count}`,
+    }),
   }),
 });
 
@@ -224,4 +232,7 @@ export const {
   useUpdateQuizPublicationMutation,
   useDeleteQuizMutation,
   useSearchPublicQuizzesQuery,
+  useGetQuestionsFromSourceQuery,
+  useLazyGetQuestionsFromSourceQuery,
+  useLazyGetQuizByIdQuery,
 } = apiSlice;

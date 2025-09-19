@@ -2,8 +2,8 @@
 import {
   useGetUserQuizzesQuery,
   useSearchPublicQuizzesQuery,
-} from "../../features/api/apiSlice";
-import { useDebounce } from "../../app/hooks";
+} from "../../../features/api/apiSlice.ts";
+import { useDebounce } from "../../../app/hooks.ts";
 import {
   Box,
   Flex,
@@ -14,7 +14,7 @@ import {
   ScrollArea,
   Tooltip,
 } from "@radix-ui/themes";
-import type { QuizSummary } from "../../shared/types/api";
+import type { QuizSummary } from "../../../shared/types/api";
 import React from "react";
 
 interface UserQuizzesViewProps {

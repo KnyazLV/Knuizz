@@ -5,8 +5,8 @@ import {
   useCreateQuizMutation,
   useUpdateQuizMutation,
   useGetQuizByIdQuery,
-} from "../../features/api/apiSlice";
-import type { CreateQuizRequest } from "../../shared/types/api";
+} from "../../../features/api/apiSlice.ts";
+import type { CreateQuizRequest } from "../../../shared/types/api";
 import {
   Dialog,
   Button,

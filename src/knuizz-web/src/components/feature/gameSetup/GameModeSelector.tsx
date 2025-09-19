@@ -1,6 +1,9 @@
-﻿// src/components/ui/GameModeSelector.tsx
-import { useState } from "react";
-import { useGetUserProfileQuery } from "../../features/api/apiSlice";
+﻿import { useState } from "react";
+import {
+  useGetUserProfileQuery,
+  useLazyGetQuestionsFromSourceQuery,
+  useLazyGetQuizByIdQuery,
+} from "../../../features/api/apiSlice.ts";
 import {
   Flex,
   Box,
@@ -19,9 +22,12 @@ import {
   PersonIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
-import UserQuizzesView from "../ui/UserQuizzesView";
+import UserQuizzesView from "./UserQuizzesView.tsx";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { startGame } from "../../../features/game/gameSlice.ts";
 
-// 1. Расширяем данные, добавляем язык и более понятные названия
 const predefinedSources = [
   {
     value: "trivia_api",
@@ -73,6 +79,14 @@ export default function GameModeSelector() {
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
   const { data: profile } = useGetUserProfileQuery();
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [triggerGetQuestions, { isLoading: isLoadingSource }] =
+    useLazyGetQuestionsFromSourceQuery();
+  const [triggerGetQuiz, { isLoading: isLoadingCustom }] =
+    useLazyGetQuizByIdQuery();
+
   const handleModeChange = (value: string) => {
     setActiveMode(value);
     setSelectedQuizId(null);
@@ -82,7 +96,38 @@ export default function GameModeSelector() {
 
   const isCustomQuizMode =
     activeMode === "my_quizzes" || activeMode === "search_quizzes";
-  const isStartDisabled = isCustomQuizMode && !selectedQuizId;
+
+  const isLoading = isLoadingSource || isLoadingCustom;
+  const isStartDisabled = (isCustomQuizMode && !selectedQuizId) || isLoading;
+
+  const handleStartGame = async () => {
+    try {
+      let questions;
+
+      if (isCustomQuizMode && selectedQuizId) {
+        const quizDetails = await triggerGetQuiz(selectedQuizId).unwrap();
+        questions = quizDetails.questions;
+      } else if (selectedSource) {
+        const sourceQuestions = await triggerGetQuestions({
+          source: selectedSource.value,
+          count: 20,
+        }).unwrap();
+        questions = sourceQuestions;
+      }
+
+      if (questions && questions.length > 0) {
+        dispatch(startGame({ questions }));
+        navigate("/game");
+      } else {
+        toast.error(
+          "Не удалось загрузить вопросы. Попробуйте другой источник.",
+        );
+      }
+    } catch (error) {
+      toast.error("Произошла ошибка при запуске игры.");
+      console.error("Ошибка при старте игры:", error);
+    }
+  };
 
   return (
     <Card
@@ -106,7 +151,7 @@ export default function GameModeSelector() {
           height: "100%",
         }}
       >
-        {/* Левая панель */}
+        {/* Left */}
         <Box
           style={{
             flexGrow: 0.5,
@@ -149,6 +194,7 @@ export default function GameModeSelector() {
           </RadioCards.Root>
         </Box>
 
+        {/* Right */}
         <Box
           style={{
             display: "flex",
@@ -162,7 +208,6 @@ export default function GameModeSelector() {
             Описание
           </Heading>
           <Flex direction="column" gap="2" style={{ height: "100%" }}>
-            {/* Рендерим описание или компонент с викторинами */}
             <Box>
               {selectedSource && selectedSource.description && (
                 <Card variant="surface">
@@ -206,9 +251,12 @@ export default function GameModeSelector() {
               )}
             </Box>
 
-            {/* Единая кнопка */}
             <Flex justify="center" mt="4" style={{ marginTop: "auto" }}>
-              <Button size="3" disabled={isStartDisabled}>
+              <Button
+                size="3"
+                disabled={isStartDisabled}
+                onClick={handleStartGame}
+              >
                 Начать
               </Button>
             </Flex>

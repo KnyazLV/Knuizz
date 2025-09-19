@@ -23,7 +23,7 @@ import FloatingElement from "../components/ui/FloatingElement.tsx";
 import AnimatedCounter from "../components/ui/AnimatedCounter.tsx";
 import AnimatedWhenNotice from "../components/ui/AnimatedWhenNotice.tsx";
 import { FloatingElementType } from "../shared/types/FloatingElementType.ts";
-import GameModeSelector from "../components/ui/GameModeSelector.tsx";
+import GameModeSelector from "../components/feature/gameSetup/GameModeSelector.tsx";
 import { useState } from "react";
 import ReminderPopup from "../components/ui/ReminderPopup.tsx";
 

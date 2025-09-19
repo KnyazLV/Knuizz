@@ -3,7 +3,7 @@ import {
   useDeleteQuizMutation,
   useGetUserQuizzesQuery,
   useUpdateQuizPublicationMutation,
-} from "../../features/api/apiSlice";
+} from "../../../features/api/apiSlice.ts";
 import {
   Table,
   Flex,

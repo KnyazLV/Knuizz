@@ -31,3 +31,10 @@ export interface UpdateQuizRequest {
   id: string;
   data: CreateQuizRequest;
 }
+
+export interface Question {
+  id?: string;
+  questionText: string;
+  options: string[];
+  correctAnswerIndex: number;
+}
