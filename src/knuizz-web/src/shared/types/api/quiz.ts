@@ -38,3 +38,9 @@ export interface Question {
   options: string[];
   correctAnswerIndex: number;
 }
+
+export interface MatchResult {
+  xpGained: number;
+  newRating: number;
+  oldRating: number;
+}

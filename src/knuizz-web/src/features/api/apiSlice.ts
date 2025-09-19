@@ -20,6 +20,7 @@ import type {
   QuizDetails,
   UpdateQuizRequest,
   Question,
+  MatchResult,
 } from "../../shared/types/api";
 import type { RootState } from "../../app/store";
 import { logout } from "../auth/authSlice.ts";
@@ -119,6 +120,18 @@ export const apiSlice = createApi({
     getMatchHistory: builder.query<MatchHistory[], number | void>({
       query: (count = 5) => `Users/profile/match-history?count=${count}`,
       providesTags: ["MatchHistory"],
+    }),
+    submitMatchResult: builder.mutation<
+      MatchResult,
+      { score: number; totalQuestions: number; duration: number }
+    >({
+      query: (matchData) => ({
+        url: "/users/profile/match-history",
+        method: "POST",
+        body: matchData,
+      }),
+      // 3. После успешной отправки делаем невалидными теги, чтобы данные в профиле обновились
+      invalidatesTags: ["MatchHistory", "Profile", "UserRank"],
     }),
     // Quizzes
     getUserQuizzes: builder.query<QuizSummary[], string>({
@@ -223,6 +236,7 @@ export const {
   useGetUserStatisticsQuery,
   useUpdateUserProfileMutation,
   useGetMatchHistoryQuery,
+  useSubmitMatchResultMutation,
   useGetLeaderboardQuery,
   useGetUserRankQuery,
   useGetUserQuizzesQuery,

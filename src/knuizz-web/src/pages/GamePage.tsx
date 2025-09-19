@@ -4,33 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../app/store";
 import { answerQuestion, resetGame } from "../features/game/gameSlice";
 import { Box, Heading, Button, Flex, Text, Progress } from "@radix-ui/themes";
-import { useNavigate } from "react-router-dom";
-
-function GameSummary({
-  score,
-  totalQuestions,
-}: {
-  score: number;
-  totalQuestions: number;
-}) {
-  const navigate = useNavigate();
-  return (
-    <Flex
-      direction="column"
-      gap="4"
-      align="center"
-      justify="center"
-      style={{ height: "80vh" }}
-    >
-      <Heading>
-        Игра окончена! Ваш счет: {score} из {totalQuestions}
-      </Heading>
-      <Button size="3" onClick={() => navigate("/")}>
-        Вернуться на главную
-      </Button>
-    </Flex>
-  );
-}
+import GameSummary from "../components/feature/game/GameSummary.tsx";
 
 export default function GamePage() {
   const dispatch = useDispatch();
@@ -48,8 +22,13 @@ export default function GamePage() {
   );
   const [isRevealing, setIsRevealing] = useState(false);
   const [progress, setProgress] = useState(100);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
 
   const questionIntervalRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setGameStartTime(Date.now());
+  }, []);
 
   useEffect(() => {
     setIsRevealing(false);
@@ -102,7 +81,17 @@ export default function GamePage() {
   };
 
   if (gameStatus === "finished") {
-    return <GameSummary score={score} totalQuestions={questions.length} />;
+    const durationInSeconds = gameStartTime
+      ? Math.round((Date.now() - gameStartTime) / 1000)
+      : 0;
+    return (
+      <GameSummary
+        score={score}
+        totalQuestions={questions.length}
+        durationSeconds={durationInSeconds}
+      />
+    );
+    // return <GameSummary score={score} totalQuestions={questions.length} />;
   }
 
   if (!questions || questions.length === 0 || !gameId) {
