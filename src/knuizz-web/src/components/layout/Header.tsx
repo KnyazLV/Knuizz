@@ -7,6 +7,7 @@ import { logout } from "../../features/auth/authSlice";
 
 import logo from "/logo.svg";
 import { ExitIcon } from "@radix-ui/react-icons";
+import { apiSlice } from "../../features/api/apiSlice.ts";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -29,6 +30,7 @@ export default function Header() {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(apiSlice.util.resetApiState());
     navigate("/");
   };
 

@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   useGetUserProfileQuery,
   useLazyGetQuestionsFromSourceQuery,
@@ -24,9 +24,10 @@ import {
 } from "@radix-ui/react-icons";
 import UserQuizzesView from "./UserQuizzesView.tsx";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { startGame } from "../../../features/game/gameSlice.ts";
+import type { RootState } from "../../../app/store.ts";
 
 const predefinedSources = [
   {
@@ -77,6 +78,7 @@ const predefinedSources = [
 export default function GameModeSelector() {
   const [activeMode, setActiveMode] = useState("trivia_api");
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const { data: profile } = useGetUserProfileQuery();
 
   const dispatch = useDispatch();
@@ -86,6 +88,15 @@ export default function GameModeSelector() {
     useLazyGetQuestionsFromSourceQuery();
   const [triggerGetQuiz, { isLoading: isLoadingCustom }] =
     useLazyGetQuizByIdQuery();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      if (activeMode === "my_quizzes" || activeMode === "search_quizzes") {
+        setActiveMode("trivia_api");
+      }
+      setSelectedQuizId(null);
+    }
+  }, [isAuthenticated, activeMode]);
 
   const handleModeChange = (value: string) => {
     setActiveMode(value);
@@ -103,20 +114,23 @@ export default function GameModeSelector() {
   const handleStartGame = async () => {
     try {
       let questions;
+      const sourceName = activeMode;
+      let userQuizId: string | null = null;
 
       if (isCustomQuizMode && selectedQuizId) {
         const quizDetails = await triggerGetQuiz(selectedQuizId).unwrap();
         questions = quizDetails.questions;
+        userQuizId = selectedQuizId;
       } else if (selectedSource) {
         const sourceQuestions = await triggerGetQuestions({
           source: selectedSource.value,
-          count: 20,
+          count: 5,
         }).unwrap();
         questions = sourceQuestions;
       }
 
       if (questions && questions.length > 0) {
-        dispatch(startGame({ questions }));
+        dispatch(startGame({ questions, sourceName, userQuizId }));
         navigate("/game");
       } else {
         toast.error(

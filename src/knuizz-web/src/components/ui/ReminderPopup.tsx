@@ -1,15 +1,21 @@
 ﻿import { useEffect, useState } from "react";
 import { Text, Button, Card, Flex } from "@radix-ui/themes";
 import { BellIcon } from "@radix-ui/react-icons";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../app/store.ts";
 
 const POPUP_STORAGE_KEY = "knz:popup:last-shown";
 const SHOW_DELAY = 3000;
 
 export default function ReminderPopup() {
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const [shouldShow, setShouldShow] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
+    if (isAuthenticated) {
+      return;
+    }
     const lastShown = localStorage.getItem(POPUP_STORAGE_KEY);
     const now = new Date();
 
@@ -25,7 +31,7 @@ export default function ReminderPopup() {
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   const closePopup = () => {
     setShouldShow(false);

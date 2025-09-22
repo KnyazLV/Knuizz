@@ -8,6 +8,8 @@ interface GameState {
   score: number;
   gameStatus: "idle" | "playing" | "finished";
   timePerQuestion: number;
+  sourceName: string | null;
+  userQuizId: string | null;
 }
 
 const initialState: GameState = {
@@ -17,6 +19,8 @@ const initialState: GameState = {
   score: 0,
   gameStatus: "idle",
   timePerQuestion: 30,
+  sourceName: null,
+  userQuizId: null,
 };
 
 const gameSlice = createSlice({
@@ -28,6 +32,8 @@ const gameSlice = createSlice({
       state,
       action: PayloadAction<{
         questions: Question[];
+        sourceName: string;
+        userQuizId?: string | null;
         timePerQuestion?: number;
       }>,
     ) => {
@@ -36,6 +42,8 @@ const gameSlice = createSlice({
       state.gameStatus = "playing";
       state.currentQuestionIndex = 0;
       state.score = 0;
+      state.sourceName = action.payload.sourceName;
+      state.userQuizId = action.payload.userQuizId || null;
       state.timePerQuestion = action.payload.timePerQuestion || 15;
     },
     // Action to handle a user's answer

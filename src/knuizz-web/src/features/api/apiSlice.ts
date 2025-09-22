@@ -123,14 +123,19 @@ export const apiSlice = createApi({
     }),
     submitMatchResult: builder.mutation<
       MatchResult,
-      { score: number; totalQuestions: number; duration: number }
+      {
+        sourceName: string;
+        userQuizId?: string | null;
+        score: number;
+        totalQuestions: number;
+        durationSeconds: number;
+      }
     >({
       query: (matchData) => ({
-        url: "/users/profile/match-history",
+        url: "/quizzes/submit-result",
         method: "POST",
         body: matchData,
       }),
-      // 3. После успешной отправки делаем невалидными теги, чтобы данные в профиле обновились
       invalidatesTags: ["MatchHistory", "Profile", "UserRank"],
     }),
     // Quizzes

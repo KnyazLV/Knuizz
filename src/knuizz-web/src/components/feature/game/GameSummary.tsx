@@ -1,4 +1,4 @@
-﻿// src/components/features/game/GameSummary.tsx
+﻿// src/components/features/game-play/GameSummary.tsx
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,18 @@ import {
   Badge,
 } from "@radix-ui/themes";
 import { StarFilledIcon, RocketIcon } from "@radix-ui/react-icons";
+import DonutChart from "../../ui/DonutChart";
+
+const formatDuration = (totalSeconds: number): string => {
+  if (totalSeconds < 60) {
+    return `${totalSeconds} сек.`;
+  }
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes} мин. ${seconds.toString().padStart(2, "0")} сек.`;
+};
+
+const RANKED_SOURCES = ["trivia_api", "wwtbm_ru", "wwtbm_en"];
 
 interface GameSummaryProps {
   score: number;
@@ -30,21 +42,29 @@ export default function GameSummary({
 }: GameSummaryProps) {
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { sourceName, userQuizId } = useSelector(
+    (state: RootState) => state.game,
+  );
 
-  // 1. Инициализируем мутацию для отправки данных
   const [submitResult, { data: matchResult, isLoading, isSuccess, isError }] =
     useSubmitMatchResultMutation();
 
-  // 2. Этот useEffect отправит данные на сервер, как только компонент появится на экране (если пользователь авторизован)
   useEffect(() => {
-    if (isAuthenticated) {
-      submitResult({ score, totalQuestions, duration: durationSeconds });
+    if (isAuthenticated && sourceName) {
+      submitResult({
+        sourceName,
+        userQuizId,
+        score,
+        totalQuestions,
+        durationSeconds,
+      });
     }
-    // Мы хотим, чтобы этот эффект сработал только один раз
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, submitResult]);
+  }, [isAuthenticated, sourceName, userQuizId]);
 
   const accuracy = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+
+  const isRankedGame = sourceName ? RANKED_SOURCES.includes(sourceName) : false;
 
   return (
     <Flex align="center" justify="center" style={{ minHeight: "80vh" }}>
@@ -56,27 +76,24 @@ export default function GameSummary({
 
           <Separator size="4" my="4" />
 
-          {/* Блок с основной статистикой */}
-          <Flex direction="column" gap="3">
-            <Flex justify="between">
-              <Text color="gray">Правильные ответы:</Text>
-              <Text weight="bold">
-                {score} из {totalQuestions}
-              </Text>
-            </Flex>
-            <Flex justify="between">
-              <Text color="gray">Точность:</Text>
-              <Text weight="bold">{accuracy.toFixed(1)}%</Text>
-            </Flex>
-            <Flex justify="between">
-              <Text color="gray">Затраченное время:</Text>
-              <Text weight="bold">{durationSeconds} сек.</Text>
+          <Flex direction="column" align="center" gap="4">
+            <DonutChart accuracy={accuracy} size={120} />
+            <Flex direction="column" gap="2" style={{ width: "100%" }}>
+              <Flex justify="between">
+                <Text color="gray">Правильные ответы:</Text>
+                <Text weight="bold">
+                  {score} из {totalQuestions}
+                </Text>
+              </Flex>
+              <Flex justify="between">
+                <Text color="gray">Затраченное время:</Text>
+                <Text weight="bold">{formatDuration(durationSeconds)}</Text>
+              </Flex>
             </Flex>
           </Flex>
 
           <Separator size="4" my="5" />
 
-          {/* 3. Блок с результатами для авторизованного пользователя */}
           {isAuthenticated ? (
             <Box>
               {isLoading && (
@@ -92,36 +109,45 @@ export default function GameSummary({
                 </Flex>
               )}
               {isSuccess && matchResult && (
-                <Flex direction="column" gap="3" my="4">
-                  <Flex justify="between" align="center">
-                    <Flex align="center" gap="2">
-                      <StarFilledIcon color="var(--yellow-9)" />{" "}
-                      <Text>Получено опыта:</Text>
+                <>
+                  {isRankedGame ? (
+                    <Flex direction="column" gap="3" my="4">
+                      <Flex justify="between" align="center">
+                        <Flex align="center" gap="2">
+                          <StarFilledIcon color="var(--yellow-9)" />
+                          <Text>Получено опыта:</Text>
+                        </Flex>
+                        <Badge color="yellow" size="2">
+                          +{matchResult.xpGained} XP
+                        </Badge>
+                      </Flex>
+                      <Flex justify="between" align="center">
+                        <Flex align="center" gap="2">
+                          <RocketIcon color="var(--ruby-9)" />
+                          <Text>Изменение рейтинга:</Text>
+                        </Flex>
+                        <Badge
+                          color={
+                            matchResult.newRating >= matchResult.oldRating
+                              ? "green"
+                              : "red"
+                          }
+                          size="2"
+                        >
+                          {matchResult.newRating - matchResult.oldRating >= 0
+                            ? "+"
+                            : ""}
+                          {matchResult.newRating - matchResult.oldRating}
+                        </Badge>
+                      </Flex>
                     </Flex>
-                    <Badge color="yellow" size="2">
-                      +{matchResult.xpGained} XP
-                    </Badge>
-                  </Flex>
-                  <Flex justify="between" align="center">
-                    <Flex align="center" gap="2">
-                      <RocketIcon color="var(--ruby-9)" />{" "}
-                      <Text>Изменение рейтинга:</Text>
-                    </Flex>
-                    <Badge
-                      color={
-                        matchResult.newRating >= matchResult.oldRating
-                          ? "green"
-                          : "red"
-                      }
-                      size="2"
-                    >
-                      {matchResult.newRating - matchResult.oldRating > 0
-                        ? "+"
-                        : ""}
-                      {matchResult.newRating - matchResult.oldRating}
-                    </Badge>
-                  </Flex>
-                </Flex>
+                  ) : (
+                    <Text as="p" size="2" color="gray" align="center" my="4">
+                      Опыт и рейтинг за прохождение пользовательских викторин не
+                      начисляется.
+                    </Text>
+                  )}
+                </>
               )}
               {isError && (
                 <Text color="red" align="center">
@@ -130,13 +156,14 @@ export default function GameSummary({
               )}
             </Box>
           ) : (
-            // 4. Сообщение для неавторизованного пользователя
             <Text as="p" color="gray" align="center" my="5">
-              <a onClick={() => navigate("/auth")}>
+              <a
+                onClick={() => navigate("/auth")}
+                style={{ cursor: "pointer", textDecoration: "underline" }}
+              >
                 Войдите или зарегистрируйтесь
               </a>
-              , чтобы сохранять прогресс, получать опыт и соревноваться в
-              рейтинге!
+              , чтобы сохранять прогресс и соревноваться в рейтинге!
             </Text>
           )}
 
