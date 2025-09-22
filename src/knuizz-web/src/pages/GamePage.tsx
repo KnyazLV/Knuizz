@@ -5,8 +5,14 @@ import type { RootState } from "../app/store";
 import { answerQuestion, resetGame } from "../features/game/gameSlice";
 import { Box, Heading, Button, Flex, Text, Progress } from "@radix-ui/themes";
 import GameSummary from "../components/feature/game/GameSummary.tsx";
+import { useSound } from "../hooks/useSound.tsx";
+
+const PRE_TIMER_DELAY = 5000;
+const ANIMATION_DURATION = 200;
+const TIMEOUT_SOUND_DURATION_MS = 3000;
 
 export default function GamePage() {
+  const { playSound, stopSound } = useSound();
   const dispatch = useDispatch();
   const {
     gameId,
@@ -23,7 +29,10 @@ export default function GamePage() {
   const [isRevealing, setIsRevealing] = useState(false);
   const [progress, setProgress] = useState(100);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
+  const timeoutSoundPlayedRef = useRef(false);
   const questionIntervalRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -31,15 +40,38 @@ export default function GamePage() {
   }, []);
 
   useEffect(() => {
+    timeoutSoundPlayedRef.current = false;
     setIsRevealing(false);
     setProgress(100);
+    setIsTransitioning(false);
+
+    const preTimer = setTimeout(() => {
+      setIsTimerActive(true);
+    }, PRE_TIMER_DELAY);
+
+    return () => clearTimeout(preTimer);
+  }, [currentQuestionIndex]);
+
+  useEffect(() => {
+    if (!isTimerActive || isRevealing) {
+      return;
+    }
 
     const startTime = Date.now();
     questionIntervalRef.current = window.setInterval(() => {
       const elapsed = Date.now() - startTime;
+      const timeLeftMs = timePerQuestion * 1000 - elapsed;
       const newProgress = 100 - (elapsed / (timePerQuestion * 1000)) * 100;
 
-      if (newProgress <= 0) {
+      if (
+        timeLeftMs <= TIMEOUT_SOUND_DURATION_MS &&
+        !timeoutSoundPlayedRef.current
+      ) {
+        playSound("timeout");
+        timeoutSoundPlayedRef.current = true;
+      }
+
+      if (timeLeftMs <= 0) {
         setProgress(0);
         setIsRevealing(true);
         setSelectedAnswerIndex(null);
@@ -54,13 +86,17 @@ export default function GamePage() {
       if (questionIntervalRef.current)
         clearInterval(questionIntervalRef.current);
     };
-  }, [currentQuestionIndex, timePerQuestion]);
+  }, [isTimerActive, isRevealing, timePerQuestion, playSound]);
 
   useEffect(() => {
     if (!isRevealing) return;
 
     const revealTimer = setTimeout(() => {
-      dispatch(answerQuestion({ answerIndex: selectedAnswerIndex ?? -1 }));
+      setIsTransitioning(true);
+      const transitionTimer = setTimeout(() => {
+        dispatch(answerQuestion({ answerIndex: selectedAnswerIndex ?? -1 }));
+      }, ANIMATION_DURATION);
+      return () => clearTimeout(transitionTimer);
     }, 1500);
 
     return () => clearTimeout(revealTimer);
@@ -68,14 +104,30 @@ export default function GamePage() {
 
   useEffect(() => {
     return () => {
+      stopSound("endgame");
       dispatch(resetGame());
     };
-  }, [dispatch]);
+  }, [dispatch, stopSound]);
+
+  useEffect(() => {
+    if (gameStatus === "finished") {
+      playSound("endgame", { volume: 0.3, loop: true });
+    }
+  }, [gameStatus, playSound]);
 
   const handleAnswerClick = (index: number) => {
     if (isRevealing) return;
 
     if (questionIntervalRef.current) clearInterval(questionIntervalRef.current);
+    setIsTimerActive(false);
+
+    const currentQuestion = questions[currentQuestionIndex];
+    if (index === currentQuestion.correctAnswerIndex) {
+      playSound("correct");
+    } else {
+      playSound("wrong");
+    }
+
     setSelectedAnswerIndex(index);
     setIsRevealing(true);
   };
@@ -91,7 +143,6 @@ export default function GamePage() {
         durationSeconds={durationInSeconds}
       />
     );
-    // return <GameSummary score={score} totalQuestions={questions.length} />;
   }
 
   if (!questions || questions.length === 0 || !gameId) {
@@ -107,26 +158,30 @@ export default function GamePage() {
         direction="column"
         align="center"
         justify="center"
-        style={{ paddingTop: "10vh", minHeight: "80vh" }}
+        style={{ padding: "5vh 0", minHeight: "90vh" }}
       >
-        <Box style={{ width: "100%", maxWidth: "800px" }}>
+        <Box
+          key={currentQuestionIndex}
+          className={`animate__animated ${isTransitioning ? "animate__fadeOut" : "animate__fadeIn"}`}
+          style={{ width: "100%", maxWidth: "1200px" }}
+        >
           <Flex justify="between" align="center" mb="2">
-            <Text size="2" color="gray">
+            <Text size="5" color="gray">
               Осталось времени:
             </Text>
-            <Text size="4" weight="bold">
+            <Text size="8" weight="bold">
               {timeLeftText}с
             </Text>
           </Flex>
           <Progress value={progress} size="3" mb="4" />
 
-          <Text size="2" color="gray" align="center" mb="4">
+          <Text size="4" color="gray" align="center" mb="6">
             Вопрос {currentQuestionIndex + 1} из {questions.length}
           </Text>
-          <Heading size="6" align="center" mb="5">
+          <Heading size="8" align="center" mb="6">
             {currentQuestion.questionText}
           </Heading>
-          <Flex direction="column" gap="3">
+          <Flex direction="column" gap="4">
             {currentQuestion.options.map((option, index) => {
               let buttonColor: "gray" | "green" | "red" = "gray";
               const style: React.CSSProperties = {};
@@ -145,10 +200,10 @@ export default function GamePage() {
               return (
                 <Button
                   key={index}
-                  size="3"
+                  size="4"
                   variant="soft"
                   color={buttonColor}
-                  style={style}
+                  style={{ ...style, padding: "28px" }}
                   onClick={() => handleAnswerClick(index)}
                 >
                   {option}

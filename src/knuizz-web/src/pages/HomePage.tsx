@@ -37,7 +37,7 @@ export default function HomePage() {
           className="min-h-[calc(100vh_-_65px)]"
           style={{ paddingTop: 100 }}
         >
-          <div className="animate__animated animate__fadeIn w-full flex justify-center flex-col align-center">
+          <div className="animate__animated animate__zoomIn animate__faster w-full flex justify-center flex-col align-center">
             <div
               className="flex flex-col items-start m-auto"
               style={{ width: "100%", maxWidth: 1400 }}

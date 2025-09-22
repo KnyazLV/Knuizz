@@ -3,7 +3,7 @@ import {
   useGetUserQuizzesQuery,
   useSearchPublicQuizzesQuery,
 } from "../../../features/api/apiSlice.ts";
-import { useDebounce } from "../../../app/hooks.ts";
+import { useDebounce } from "../../../hooks/useDebounce";
 import {
   Box,
   Flex,

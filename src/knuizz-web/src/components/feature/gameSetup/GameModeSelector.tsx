@@ -29,10 +29,12 @@ import { useNavigate } from "react-router-dom";
 import { startGame } from "../../../features/game/gameSlice.ts";
 import type { RootState } from "../../../app/store.ts";
 
+const ANIMATION_DURATION = 150;
+
 const predefinedSources = [
   {
     value: "trivia_api",
-    label: "Общая Викторина (EN)",
+    label: "Викторина Trivia API",
     lang: "EN",
     icon: GlobeIcon,
     description:
@@ -78,6 +80,7 @@ const predefinedSources = [
 export default function GameModeSelector() {
   const [activeMode, setActiveMode] = useState("trivia_api");
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
+  const [isContentVisible, setIsContentVisible] = useState(true);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const { data: profile } = useGetUserProfileQuery();
 
@@ -99,8 +102,12 @@ export default function GameModeSelector() {
   }, [isAuthenticated, activeMode]);
 
   const handleModeChange = (value: string) => {
-    setActiveMode(value);
-    setSelectedQuizId(null);
+    setIsContentVisible(false);
+    setTimeout(() => {
+      setActiveMode(value);
+      setSelectedQuizId(null);
+      setIsContentVisible(true);
+    }, ANIMATION_DURATION);
   };
 
   const selectedSource = predefinedSources.find((s) => s.value === activeMode);
@@ -216,6 +223,8 @@ export default function GameModeSelector() {
             flexGrow: 1,
             flexBasis: 0,
             minWidth: 0,
+            transition: `opacity ${ANIMATION_DURATION}ms ease-out`,
+            opacity: isContentVisible ? 1 : 0,
           }}
         >
           <Heading align="center" m="2" size="4">

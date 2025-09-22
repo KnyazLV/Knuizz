@@ -43,4 +43,6 @@ export interface MatchResult {
   xpGained: number;
   newRating: number;
   oldRating: number;
+  oldLevel: number;
+  newLevel: number;
 }
