@@ -43,53 +43,6 @@ public class QuizService : IQuizService {
         }
     }
 
-    //#region SubmitResults
-    public async Task SubmitMatchResultAsync(Guid userId, SubmitMatchResultDto resultDto) {
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-
-        try {
-            var userStats = await _context.UserStatistics.FindAsync(userId);
-            var ratingChange = 0;
-
-            if (userStats != null && resultDto.SourceName is "trivia_api" or "wwtbm_ru" or "wwtbm_en") {
-                ratingChange = CalculateRatingChange(resultDto.Score, resultDto.TotalQuestions, userStats.Rating);
-
-                userStats.TotalGamesPlayed++;
-                userStats.TotalCorrectAnswers += resultDto.Score;
-                userStats.TotalAnswers += resultDto.TotalQuestions;
-                userStats.Rating += ratingChange;
-                userStats.CurrentExperience += resultDto.Score;
-
-                var requiredExp = ExperienceForNextLevel(userStats.Level);
-                while (userStats.CurrentExperience >= requiredExp) {
-                    userStats.Level++;
-                    userStats.CurrentExperience -= requiredExp;
-                    requiredExp = ExperienceForNextLevel(userStats.Level);
-                }
-            }
-
-            var matchHistory = new MatchHistory {
-                UserId = userId,
-                Score = resultDto.Score,
-                DurationSeconds = resultDto.DurationSeconds,
-                SourceName = resultDto.SourceName,
-                UserQuizId = resultDto.UserQuizId,
-                CompletedAt = DateTime.UtcNow,
-                TotalQuestions = resultDto.TotalQuestions,
-                RatingChange = ratingChange
-            };
-            _context.MatchHistories.Add(matchHistory);
-
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
-        }
-        catch (Exception ex) {
-            await transaction.RollbackAsync();
-            _logger.LogError(ex, "Failed to submit match result for user {UserId}", userId);
-            throw;
-        }
-    }
-
     //#endregion
 
     //#region User's Quizzes
@@ -221,6 +174,65 @@ public class QuizService : IQuizService {
         quiz.IsPublished = isPublished;
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    //#region SubmitResults
+    public async Task<MatchResultResponseDto> SubmitMatchResultAsync(Guid userId, SubmitMatchResultDto resultDto) {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try {
+            var userStats = await _context.UserStatistics.FindAsync(userId);
+            if (userStats == null) throw new InvalidOperationException("User statistics not found.");
+            var oldRating = userStats.Rating;
+            var ratingChange = 0;
+            var xpGained = 0;
+
+            if (resultDto.SourceName is "trivia_api" or "wwtbm_ru" or "wwtbm_en") {
+                ratingChange = CalculateRatingChange(resultDto.Score, resultDto.TotalQuestions, userStats.Rating);
+                xpGained = resultDto.Score;
+                userStats.Rating += ratingChange;
+            } else {
+                xpGained = resultDto.Score;
+            }
+
+            userStats.TotalGamesPlayed++;
+            userStats.TotalCorrectAnswers += resultDto.Score;
+            userStats.TotalAnswers += resultDto.TotalQuestions;
+            userStats.CurrentExperience += xpGained;
+
+            var requiredExp = ExperienceForNextLevel(userStats.Level);
+            while (userStats.CurrentExperience >= requiredExp) {
+                userStats.Level++;
+                userStats.CurrentExperience -= requiredExp;
+                requiredExp = ExperienceForNextLevel(userStats.Level);
+            }
+
+            var matchHistory = new MatchHistory {
+                UserId = userId,
+                Score = resultDto.Score,
+                DurationSeconds = resultDto.DurationSeconds,
+                SourceName = resultDto.SourceName,
+                UserQuizId = resultDto.UserQuizId,
+                CompletedAt = DateTime.UtcNow,
+                TotalQuestions = resultDto.TotalQuestions,
+                RatingChange = ratingChange
+            };
+            _context.MatchHistories.Add(matchHistory);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return new MatchResultResponseDto {
+                XpGained = xpGained,
+                OldRating = oldRating,
+                NewRating = userStats.Rating
+            };
+        }
+        catch (Exception ex) {
+            await transaction.RollbackAsync();
+            _logger.LogError(ex, "Failed to submit match result for user {UserId}", userId);
+            throw;
+        }
     }
 
     /// <summary>

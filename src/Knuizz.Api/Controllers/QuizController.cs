@@ -65,18 +65,18 @@ public class QuizController : ControllerBase {
     /// <response code="500">Internal server error when saving the result.</response>
     [HttpPost("submit-result")]
     [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(MatchResultResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SubmitResult([FromBody] SubmitMatchResultDto resultDto) {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         try {
-            await _quizService.SubmitMatchResultAsync(userId, resultDto);
-            return Ok(new { message = "Match result submitted successfully." });
+            var result = await _quizService.SubmitMatchResultAsync(userId, resultDto);
+            return Ok(result);
         }
         catch (Exception ex) {
-            return StatusCode(500, new { message = $"An error occurred while submitting the result: {ex.Message}" });
+            return StatusCode(500, new { message = "An error occurred while submitting the result." });
         }
     }
 

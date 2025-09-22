@@ -5,7 +5,7 @@ namespace Knuizz.Api.Application.Services;
 
 public interface IQuizService {
     Task<List<Question>> GetQuestionsFromSourceAsync(string source, int count);
-    Task SubmitMatchResultAsync(Guid userId, SubmitMatchResultDto resultDto);
+    Task<MatchResultResponseDto> SubmitMatchResultAsync(Guid userId, SubmitMatchResultDto resultDto);
     Task<QuizDetailDto?> GetUserQuizByIdAsync(Guid quizId);
     Task<Guid> CreateUserQuizAsync(CreateQuizDto quizDto, Guid authorId);
     Task<bool> UpdateUserQuizAsync(Guid quizId, CreateQuizDto quizDto, Guid userId);
