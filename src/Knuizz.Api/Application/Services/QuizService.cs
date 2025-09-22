@@ -183,6 +183,8 @@ public class QuizService : IQuizService {
         try {
             var userStats = await _context.UserStatistics.FindAsync(userId);
             if (userStats == null) throw new InvalidOperationException("User statistics not found.");
+            
+            var oldLevel = userStats.Level;
             var oldRating = userStats.Rating;
             var ratingChange = 0;
             var xpGained = 0;
@@ -225,7 +227,9 @@ public class QuizService : IQuizService {
             return new MatchResultResponseDto {
                 XpGained = xpGained,
                 OldRating = oldRating,
-                NewRating = userStats.Rating
+                NewRating = userStats.Rating,
+                OldLevel = oldLevel,
+                NewLevel = userStats.Level 
             };
         }
         catch (Exception ex) {
