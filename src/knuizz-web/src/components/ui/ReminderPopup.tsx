@@ -3,11 +3,13 @@ import { Text, Button, Card, Flex } from "@radix-ui/themes";
 import { BellIcon } from "@radix-ui/react-icons";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../app/store.ts";
+import { useTranslation } from "react-i18next";
 
 const POPUP_STORAGE_KEY = "knz:popup:last-shown";
 const SHOW_DELAY = 3000;
 
 export default function ReminderPopup() {
+  const { t } = useTranslation();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const [shouldShow, setShouldShow] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -68,12 +70,11 @@ export default function ReminderPopup() {
         />
       </Flex>
       <Text as="p" size="3" align="center" mb="2">
-        Зарегистрируйтесь, чтобы получать больше возможностей и сохранять
-        прогресс.
+        {t("reminderPopup.registerPrompt")}
       </Text>
       <Flex justify="center">
         <Button variant="surface" size="2" onClick={closePopup}>
-          Понятно!
+          {t("reminderPopup.gotIt")}
         </Button>
       </Flex>
     </Card>

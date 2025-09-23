@@ -1,0 +1,243 @@
+﻿{
+  "header": {
+    "leaderboard": "Leaderboard",
+    "profile": "Profile",
+    "login": "Log In",
+    "logout": "Log Out",
+    "logoAlt": "Knuizz Logo"
+  },
+  "homePage": {
+    "gameTitle": "Quiz",
+    "mainHeading": "Test your erudition",
+    "description": "Test your knowledge in a wide variety of categories — from science to pop culture — and compete with other experts for the title of the Knyaz of Knowledge!",
+    "startGame": "Start Game",
+    "back": "Back",
+    "aboutProjectBadge": "Open-source pet project",
+    "aboutProjectTitle": "About Knuizz",
+    "aboutProjectDescription1": "<0>Knuizz</0> is a quiz platform created to demonstrate full-stack development skills. The project is fully open source and continues to evolve.",
+    "aboutProjectDescription2": "If you encounter any bugs, feel free to report them to my email: <1>r.belovs@inbox.lv</1>. This is a student pet project, so I'm sure it still has many errors.",
+    "sourceCode": "Source Code",
+    "featureQuickRoundsTitle": "Quick Rounds",
+    "featureQuickRoundsDescription": "Play anytime, anywhere. One quiz round takes just a few minutes, perfect for short breaks.",
+    "featureApiTitle": "REST API",
+    "featureApiDescription": "A full-featured API for developers. Create your own clients, bots, or integrate quizzes into your applications.",
+    "featureRatingTitle": "Rating and Progress",
+    "featureRatingDescription": "Track your achievements, compete with other players, and climb the leaderboard.",
+    "questionsInDb": "Questions in the database"
+  },
+  "footer": {
+    "madeBy": "Made by Rostislavs Belovs",
+    "copyright": "Copyright © {{year}} All rights reserved"
+  },
+  "reminderPopup": {
+    "registerPrompt": "Register to get more features and save your progress.",
+    "gotIt": "Got it!"
+  },
+  "gameModeSelector": {
+    "title": "Set up your quiz",
+    "sourcesHeading": "Sources",
+    "descriptionHeading": "Description",
+    "startButton": "Start",
+    "loginRequiredMessage": "Please log in to use this mode.",
+    "errorLoadQuestions": "Failed to load questions. Please try another source.",
+    "errorStartGame": "An error occurred while starting the game.",
+    "sourceLabel": "Source",
+    "sources": {
+      "trivia_api": {
+        "label": "Trivia API Quiz",
+        "description": "A set of random English questions on a variety of topics from the open Trivia API source. A great choice for a quick warm-up and knowledge check."
+      },
+      "wwtbm_ru": {
+        "label": "Who Wants to Be a Millionaire",
+        "description": "Classic Russian-language questions from a database inspired by the famous TV show. The collection contains questions from the show as of December 2003. Author: Sergey Zubar."
+      },
+      "wwtbm_en": {
+        "label": "Who Wants to Be a Millionaire",
+        "description": "A database compiled by an anonymous user from Reddit, based on questions from GameFAQs in the format of the famous TV show \"Who Wants to Be a Millionaire\""
+      },
+      "my_quizzes": {
+        "label": "My Quizzes",
+        "description": ""
+      },
+      "search_quizzes": {
+        "label": "Search Quizzes",
+        "description": ""
+      }
+    }
+  },
+  "userQuizzesView": {
+    "myQuizzesTitle": "My Quizzes",
+    "searchResultsTitle": "Search Results",
+    "emptyListMessage": "The list is empty.",
+    "searchPlaceholder": "Enter quiz name to search...",
+    "questionsCount": "{{count}} questions",
+    "byAuthor": "by {{authorName}}"
+  },
+  "auth": {
+    "titleLogin": "Login to your account",
+    "titleRegister": "Create an account",
+    "usernamePlaceholder": "Username",
+    "usernameHelp": "3 to 50 characters.",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "passwordHelp": "At least 6 characters.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "rememberMe": "Remember me",
+    "loading": "Loading...",
+    "loginButton": "Log In",
+    "registerButton": "Register ",
+    "noAccountPrompt": "No account? ",
+    "alreadyHaveAccountPrompt": "Already have an account? ",
+    "registrationSuccessTitle": "Registration successful",
+    "registrationSuccessDescription": "Your account has been successfully created. You can now log in using your credentials.",
+    "registrationSuccessOk": "Great!",
+    "errorDefault": "An error occurred. Please try again.",
+    "backToHome": "Back to Home"
+  },
+  "game": {
+    "summary": {
+      "gameOverTitle": "Game Over!",
+      "correctAnswersLabel": "Correct Answers:",
+      "correctAnswersValue": "{{score}} of {{total}}",
+      "timeSpentLabel": "Time Spent:",
+      "duration": {
+        "seconds": "{{count}} sec.",
+        "minutesSeconds": "{{minutes}} min {{seconds}} sec."
+      },
+      "savingResults": "Saving results...",
+      "xpGainedLabel": "XP Gained:",
+      "ratingChangeLabel": "Rating Change:",
+      "noXpForCustom": "XP and rating are not awarded for custom quizzes.",
+      "errorSaving": "Failed to save results.",
+      "loginPrompt": "<0>Log in or register</0> to save your progress and compete in the rankings!",
+      "backToHomeBtn": "Back to Home"
+    },
+    "play": {
+      "loading": "Loading questions...",
+      "timeLeftLabel": "Time Left:",
+      "timeLeftValue": "{{count}}s",
+      "questionProgress": "Question {{current}} of {{total}}"
+    },
+    "levelUp": {
+      "header": "Level UP!",
+      "message": "Keep up the good work, expert!",
+      "gotIt": "Excellent!"
+    }
+  },
+  "profile": {
+    "loading": "Loading...",
+    "errorLoading": "Failed to load profile data. Please try refreshing the page.",
+    "level": "Level:",
+    "experience": "Experience",
+    "rating": "Rating",
+    "rank": "Rank",
+    "toastUsernameSuccess": "Username changed successfully!",
+    "toastUsernameError": "This username is already taken. Please try another one.",
+
+    "statistics": {
+      "title": "Statistics",
+      "gamesPlayed": "Games played: {{count}}",
+      "correctAnswers": "Correct answers: {{count}}",
+      "totalAnswers": "Total answers: {{count}}",
+      "accuracy": "Correct answers percentage"
+    },
+
+    "matchHistory": {
+      "title": "Recent Matches",
+      "noMatches": "You haven't played any matches yet.",
+      "timeHeader": "Time",
+      "sourceHeader": "Source",
+      "answersHeader": "Answers",
+      "ratingHeader": "Rating"
+    },
+
+    "quizTable": {
+      "title": "My Quizzes",
+      "createBtn": "Create",
+      "noQuizzes": "You haven't created any quizzes yet. Click \"Create\" to get started!",
+      "errorLoading": "Failed to load your quizzes. Please try again.",
+      "nameHeader": "Name",
+      "createdHeader": "Date Created",
+      "questionsHeader": "Questions",
+      "statusHeader": "Status",
+      "actionsHeader": "Actions",
+      "statusPublic": "Public",
+      "statusPrivate": "Private",
+      "editTooltip": "Edit",
+      "makePrivateTooltip": "Make Private",
+      "makePublicTooltip": "Make Public",
+      "deleteTooltip": "Delete",
+      "confirmDeleteTitle": "Confirm Deletion",
+      "confirmDeleteDescription": "Are you sure you want to delete the quiz \"{{title}}\"? This action is irreversible.",
+      "cancelBtn": "Cancel",
+      "deleteBtn": "Delete",
+      "toastDeleted": "Quiz deleted successfully.",
+      "toastDeleteError": "Failed to delete the quiz.",
+      "toastStatusChanged": "Quiz status changed to \"{{status}}\".",
+      "toastStatusError": "Failed to change the status."
+    },
+
+    "quizForm": {
+      "createTitle": "Create a New Quiz",
+      "editTitle": "Edit Quiz",
+      "createDescription": "Fill in the quiz information and add up to 30 questions.",
+      "editDescription": "Modify your quiz details.",
+      "loading": "Loading quiz data...",
+      "quizNameLabel": "Quiz Name",
+      "quizNamePlaceholder": "e.g., 'World Capitals'",
+      "quizDescriptionLabel": "Description (optional)",
+      "quizDescriptionPlaceholder": "A brief description of your quiz",
+      "questionsTitle": "Questions",
+      "questionLabel": "Question {{index}}",
+      "questionPlaceholder": "Question text",
+      "optionsLabel": "Answer Options (select the correct one)",
+      "optionPlaceholder": "Option {{index}}",
+      "addQuestionBtn": "Add Question",
+      "errorServer": "A server error occurred. Please try again later.",
+      "saving": "Saving...",
+      "saveChangesBtn": "Save Changes",
+      "createQuizBtn": "Create Quiz",
+      "cancelBtn": "Cancel",
+      "toastCreated": "Quiz created successfully!",
+      "toastUpdated": "Quiz updated successfully!",
+      "toastCreateError": "Error while creating.",
+      "toastUpdateError": "Error while updating.",
+      "validation": {
+        "atLeastOneQuestion": "At least one question is required",
+        "maxQuestions": "Maximum of 30 questions",
+        "titleRequired": "Title is required",
+        "titleMinLength": "Minimum 3 characters",
+        "titleMaxLength": "Maximum 255 characters",
+        "questionTextRequired": "Question text cannot be empty",
+        "optionRequired": "Answer option cannot be empty",
+        "allOptionsRequired": "All 4 answer options are required"
+      }
+    }
+  },
+  "userStatsHoverCard": {
+    "errorLoading": "Failed to load statistics.",
+    "ratingLabel": "Rating:",
+    "levelLabel": "Level:",
+    "totalGamesLabel": "Total Games:",
+    "accuracyLabel": "Answers Accuracy:",
+    "notAvailable": "N/A"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "errorLoading": "Error loading leaderboard. Please try refreshing the page.",
+    "unknownPlayer": "Unknown",
+    "ratingLabel": "Rating:",
+    "crownAlt": "Crown",
+    "podium": {
+      "first": "1st",
+      "second": "2nd",
+      "third": "3rd"
+    },
+    "table": {
+      "rankHeader": "Rank",
+      "playerHeader": "Player",
+      "ratingHeader": "Rating"
+    }
+  }
+}

@@ -5,22 +5,22 @@ import {
   useLazyGetQuizByIdQuery,
 } from "../../../features/api/apiSlice.ts";
 import {
-  Flex,
-  Box,
-  Text,
-  Button,
-  Heading,
-  RadioCards,
-  Card,
-  Separator,
   Badge,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
   Link,
+  RadioCards,
+  Separator,
+  Text,
 } from "@radix-ui/themes";
 import {
-  LaptopIcon,
   GlobeIcon,
-  PersonIcon,
+  LaptopIcon,
   MagnifyingGlassIcon,
+  PersonIcon,
 } from "@radix-ui/react-icons";
 import UserQuizzesView from "./UserQuizzesView.tsx";
 import toast from "react-hot-toast";
@@ -28,56 +28,40 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { startGame } from "../../../features/game/gameSlice.ts";
 import type { RootState } from "../../../app/store.ts";
+import { useTranslation } from "react-i18next";
 
 const ANIMATION_DURATION = 150;
 
-const predefinedSources = [
+const sourcesConfig = [
   {
     value: "trivia_api",
-    label: "Викторина Trivia API",
     lang: "EN",
     icon: GlobeIcon,
-    description:
-      "Набор случайных вопросов на английском языке на самые разные темы из открытого источника Trivia API. Отличный выбор для быстрой разминки и проверки эрудиции.",
     sourceLink: "https://opentdb.com/",
   },
   {
     value: "wwtbm_ru",
-    label: "Кто хочет стать миллионером",
     lang: "RU",
     icon: LaptopIcon,
-    description:
-      "Классические вопросы на русском языке из базы, вдохновленной знаменитым телешоу. Сборник содержит вопросы передачи на момент декабря 2003г. Автор: Сергей Зубарь.",
     sourceLink: "https://sevabashirov.livejournal.com/398325.html",
   },
   {
     value: "wwtbm_en",
-    label: "Кто хочет стать миллионером",
     lang: "EN",
     icon: LaptopIcon,
-    description:
-      'База данных собранная анонимным пользователем с Reddit, основанная на вопросах из GameFAQs в формате известной телепередачи "Кто хочет стать миллионером"',
     sourceLink: "https://pastebin.com/QRGzxxEy",
   },
-  {
-    value: "my_quizzes",
-    label: "Мои викторины",
-    lang: "RU/EN",
-    icon: PersonIcon,
-    description: null,
-    sourceLink: null,
-  },
+  { value: "my_quizzes", lang: "RU/EN", icon: PersonIcon, sourceLink: null },
   {
     value: "search_quizzes",
-    label: "Поиск викторин",
     lang: "RU/EN",
     icon: MagnifyingGlassIcon,
-    description: null,
     sourceLink: null,
   },
 ];
 
 export default function GameModeSelector() {
+  const { t } = useTranslation();
   const [activeMode, setActiveMode] = useState("trivia_api");
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
   const [isContentVisible, setIsContentVisible] = useState(true);
@@ -91,6 +75,12 @@ export default function GameModeSelector() {
     useLazyGetQuestionsFromSourceQuery();
   const [triggerGetQuiz, { isLoading: isLoadingCustom }] =
     useLazyGetQuizByIdQuery();
+
+  const predefinedSources = sourcesConfig.map((source) => ({
+    ...source,
+    label: t(`gameModeSelector.sources.${source.value}.label`),
+    description: t(`gameModeSelector.sources.${source.value}.description`),
+  }));
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -129,24 +119,21 @@ export default function GameModeSelector() {
         questions = quizDetails.questions;
         userQuizId = selectedQuizId;
       } else if (selectedSource) {
-        const sourceQuestions = await triggerGetQuestions({
+        questions = await triggerGetQuestions({
           source: selectedSource.value,
           count: 5,
         }).unwrap();
-        questions = sourceQuestions;
       }
 
       if (questions && questions.length > 0) {
         dispatch(startGame({ questions, sourceName, userQuizId }));
         navigate("/game");
       } else {
-        toast.error(
-          "Не удалось загрузить вопросы. Попробуйте другой источник.",
-        );
+        toast.error(t("gameModeSelector.errorLoadQuestions"));
       }
     } catch (error) {
-      toast.error("Произошла ошибка при запуске игры.");
-      console.error("Ошибка при старте игры:", error);
+      toast.error(t("gameModeSelector.errorStartGame"));
+      console.error("Error when starting the game:", error);
     }
   };
 
@@ -155,12 +142,11 @@ export default function GameModeSelector() {
       className="game-mode-selector"
       style={{
         width: "100%",
-        // height: 550,
         transition: "all 0.3s ease-in-out",
       }}
     >
       <Heading size="7" align="center" m="2">
-        Настройте вашу викторину
+        {t("gameModeSelector.title")}
       </Heading>
       <Separator size="4" my="4" />
 
@@ -182,7 +168,7 @@ export default function GameModeSelector() {
           }}
         >
           <Heading align="center" m="2" size="4">
-            Источники
+            {t("gameModeSelector.sourcesHeading")}
           </Heading>
           <RadioCards.Root value={activeMode} onValueChange={handleModeChange}>
             <Flex direction="column" gap="3" style={{ height: 400 }}>
@@ -228,7 +214,7 @@ export default function GameModeSelector() {
           }}
         >
           <Heading align="center" m="2" size="4">
-            Описание
+            {t("gameModeSelector.descriptionHeading")}
           </Heading>
           <Flex direction="column" gap="2" style={{ height: "100%" }}>
             <Box>
@@ -240,7 +226,7 @@ export default function GameModeSelector() {
                   </Text>
                   {selectedSource.sourceLink && (
                     <Text as="p" mt="4" size="2">
-                      Источник:{" "}
+                      {t("gameModeSelector.sourceLabel")}:{" "}
                       <Link href={selectedSource.sourceLink} target="_blank">
                         {selectedSource.sourceLink}
                       </Link>
@@ -269,7 +255,7 @@ export default function GameModeSelector() {
 
               {isCustomQuizMode && !profile && (
                 <Text color="gray">
-                  Пожалуйста, войдите в систему, чтобы использовать этот режим.
+                  {t("gameModeSelector.loginRequiredMessage")}
                 </Text>
               )}
             </Box>
@@ -280,7 +266,7 @@ export default function GameModeSelector() {
                 disabled={isStartDisabled}
                 onClick={handleStartGame}
               >
-                Начать
+                {t("gameModeSelector.startButton")}
               </Button>
             </Flex>
           </Flex>

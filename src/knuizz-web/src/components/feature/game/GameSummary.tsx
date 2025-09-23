@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { RootState } from "../../../app/store";
-import { useSubmitMatchResultMutation } from "../../../features/api/apiSlice";
+import type { RootState } from "@/app/store.ts";
+import { useSubmitMatchResultMutation } from "@/features/api/apiSlice.ts";
+import { useTranslation, Trans } from "react-i18next";
 import {
   Box,
   Heading,
@@ -19,13 +20,14 @@ import { StarFilledIcon, RocketIcon } from "@radix-ui/react-icons";
 import DonutChart from "../../ui/DonutChart";
 import LevelUpModal from "../../ui/LevelUpModal.tsx";
 
-const formatDuration = (totalSeconds: number): string => {
-  if (totalSeconds < 60) {
-    return `${totalSeconds} сек.`;
-  }
+const formatDuration = (totalSeconds: number) => {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  return `${minutes} мин. ${seconds.toString().padStart(2, "0")} сек.`;
+  return {
+    minutes,
+    seconds: seconds.toString().padStart(2, "0"),
+    totalSeconds,
+  };
 };
 
 const RANKED_SOURCES = ["trivia_api", "wwtbm_ru", "wwtbm_en"];
@@ -41,6 +43,7 @@ export default function GameSummary({
   totalQuestions,
   durationSeconds,
 }: GameSummaryProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const { sourceName, userQuizId } = useSelector(
@@ -52,6 +55,15 @@ export default function GameSummary({
     oldLevel: number;
     newLevel: number;
   } | null>(null);
+
+  const duration = formatDuration(durationSeconds);
+  const durationText =
+    duration.minutes > 0
+      ? t("game.summary.duration.minutesSeconds", {
+          minutes: duration.minutes,
+          seconds: duration.seconds,
+        })
+      : t("game.summary.duration.seconds", { count: duration.totalSeconds });
 
   useEffect(() => {
     if (isAuthenticated && sourceName) {
@@ -92,7 +104,7 @@ export default function GameSummary({
         <Card style={{ width: "100%", maxWidth: "600px" }}>
           <Box p="4">
             <Heading size="7" align="center" mb="4">
-              Игра окончена!
+              {t("game.summary.gameOverTitle")}
             </Heading>
 
             <Separator size="4" my="4" />
@@ -101,14 +113,19 @@ export default function GameSummary({
               <DonutChart accuracy={accuracy} size={120} />
               <Flex direction="column" gap="2" style={{ width: "100%" }}>
                 <Flex justify="between">
-                  <Text color="gray">Правильные ответы:</Text>
+                  <Text color="gray">
+                    {t("game.summary.correctAnswersLabel")}
+                  </Text>
                   <Text weight="bold">
-                    {score} из {totalQuestions}
+                    {t("game.summary.correctAnswersValue", {
+                      score,
+                      total: totalQuestions,
+                    })}
                   </Text>
                 </Flex>
                 <Flex justify="between">
-                  <Text color="gray">Затраченное время:</Text>
-                  <Text weight="bold">{formatDuration(durationSeconds)}</Text>
+                  <Text color="gray">{t("game.summary.timeSpentLabel")}</Text>
+                  <Text weight="bold">{durationText}</Text>
                 </Flex>
               </Flex>
             </Flex>
@@ -126,7 +143,7 @@ export default function GameSummary({
                     my="4"
                   >
                     <Spinner size="3" />
-                    <Text color="gray">Сохраняем результаты...</Text>
+                    <Text color="gray">{t("game.summary.savingResults")}</Text>
                   </Flex>
                 )}
                 {isSuccess && matchResult && (
@@ -136,7 +153,7 @@ export default function GameSummary({
                         <Flex justify="between" align="center">
                           <Flex align="center" gap="2">
                             <StarFilledIcon color="var(--yellow-9)" />
-                            <Text>Получено опыта:</Text>
+                            <Text>{t("game.summary.xpGainedLabel")}</Text>
                           </Flex>
                           <Badge color="yellow" size="2">
                             +{matchResult.xpGained} XP
@@ -145,7 +162,7 @@ export default function GameSummary({
                         <Flex justify="between" align="center">
                           <Flex align="center" gap="2">
                             <RocketIcon color="var(--ruby-9)" />
-                            <Text>Изменение рейтинга:</Text>
+                            <Text>{t("game.summary.ratingChangeLabel")}</Text>
                           </Flex>
                           <Badge
                             color={
@@ -164,33 +181,31 @@ export default function GameSummary({
                       </Flex>
                     ) : (
                       <Text as="p" size="2" color="gray" align="center" my="4">
-                        Опыт и рейтинг за прохождение пользовательских викторин
-                        не начисляется.
+                        {t("game.summary.noXpForCustom")}
                       </Text>
                     )}
                   </>
                 )}
                 {isError && (
                   <Text color="red" align="center">
-                    Не удалось сохранить результаты.
+                    {t("game.summary.errorSaving")}
                   </Text>
                 )}
               </Box>
             ) : (
               <Text as="p" color="gray" align="center" my="5">
-                <a
-                  onClick={() => navigate("/auth")}
-                  style={{ cursor: "pointer", textDecoration: "underline" }}
-                >
-                  Войдите или зарегистрируйтесь
-                </a>
-                , чтобы сохранять прогресс и соревноваться в рейтинге!
+                <Trans i18nKey="game.summary.loginPrompt">
+                  <a
+                    onClick={() => navigate("/auth")}
+                    style={{ cursor: "pointer", textDecoration: "underline" }}
+                  />
+                </Trans>
               </Text>
             )}
 
             <Flex justify="center" mt="5">
               <Button size="3" onClick={() => navigate("/")}>
-                Вернуться на главную
+                {t("game.summary.backToHomeBtn")}
               </Button>
             </Flex>
           </Box>

@@ -5,8 +5,8 @@ import {
   useCreateQuizMutation,
   useUpdateQuizMutation,
   useGetQuizByIdQuery,
-} from "../../../features/api/apiSlice.ts";
-import type { CreateQuizRequest } from "../../../shared/types/api";
+} from "@/features/api/apiSlice.ts";
+import type { CreateQuizRequest } from "@/shared/types/api";
 import {
   Dialog,
   Button,
@@ -22,6 +22,8 @@ import {
 } from "@radix-ui/themes";
 import { PlusIcon, TrashIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+
 interface QuizFormDialogProps {
   quizId?: string;
   isOpen: boolean;
@@ -34,8 +36,8 @@ export default function QuizFormDialog({
   onOpenChange,
 }: QuizFormDialogProps) {
   const isEditMode = !!quizId;
+  const { t } = useTranslation();
 
-  // Fetch quiz data only in edit mode when the dialog is open
   const { data: existingQuiz, isLoading: isLoadingQuiz } = useGetQuizByIdQuery(
     quizId!,
     { skip: !isEditMode || !isOpen },
@@ -69,13 +71,17 @@ export default function QuizFormDialog({
     control,
     name: "questions",
     rules: {
-      required: "Нужен хотя бы один вопрос",
-      minLength: 1,
-      maxLength: { value: 30, message: "Максимум 30 вопросов" },
+      required: t("profile.quizForm.validation.atLeastOneQuestion"),
+      minLength: 1, // This is a logic rule, no message needed
+      maxLength: {
+        value: 30,
+        message: t("profile.quizForm.validation.maxQuestions"),
+      },
     },
   });
 
   useEffect(() => {
+    // Logic to reset form, no translation needed here
     if (isEditMode && existingQuiz) {
       reset(existingQuiz);
     }
@@ -98,15 +104,18 @@ export default function QuizFormDialog({
     try {
       if (isEditMode) {
         await updateQuiz({ id: quizId!, data }).unwrap();
-        toast.success("Викторина успешно обновлена!");
+        toast.success(t("profile.quizForm.toastUpdated"));
       } else {
         await createQuiz(data).unwrap();
-        toast.success("Викторина успешно создана!");
+        toast.success(t("profile.quizForm.toastCreated"));
       }
       onOpenChange(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       toast.error(
-        isEditMode ? "Ошибка при обновлении." : "Ошибка при создании.",
+        isEditMode
+          ? t("profile.quizForm.toastUpdateError")
+          : t("profile.quizForm.toastCreateError"),
       );
     }
   };
@@ -115,32 +124,40 @@ export default function QuizFormDialog({
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Content style={{ maxWidth: 800 }}>
         <Dialog.Title>
-          {isEditMode ? "Редактирование викторины" : "Создание новой викторины"}
+          {isEditMode
+            ? t("profile.quizForm.editTitle")
+            : t("profile.quizForm.createTitle")}
         </Dialog.Title>
         <Dialog.Description size="2" mb="4">
           {isEditMode
-            ? "Измените данные вашей викторины."
-            : "Заполните информацию о викторине и добавьте до 30 вопросов."}
+            ? t("profile.quizForm.editDescription")
+            : t("profile.quizForm.createDescription")}
         </Dialog.Description>
 
         {isLoadingQuiz ? (
           <Flex justify="center" p="8">
-            <Spinner size="3" />
+            <Spinner size="3" />{" "}
+            <Text ml="2">{t("profile.quizForm.loading")}</Text>
           </Flex>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* The form JSX remains identical */}
             <Flex direction="column" gap="4">
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
-                  Название викторины
+                  {t("profile.quizForm.quizNameLabel")}
                 </Text>
                 <TextField.Root
-                  placeholder="Например, 'Столицы мира'"
+                  placeholder={t("profile.quizForm.quizNamePlaceholder")}
                   {...register("title", {
-                    required: "Название обязательно",
-                    minLength: { value: 3, message: "Минимум 3 символа" },
-                    maxLength: { value: 255, message: "Максимум 255 символов" },
+                    required: t("profile.quizForm.validation.titleRequired"),
+                    minLength: {
+                      value: 3,
+                      message: t("profile.quizForm.validation.titleMinLength"),
+                    },
+                    maxLength: {
+                      value: 255,
+                      message: t("profile.quizForm.validation.titleMaxLength"),
+                    },
                   })}
                 />
                 {errors.title && (
@@ -149,19 +166,21 @@ export default function QuizFormDialog({
                   </Text>
                 )}
               </label>
+
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
-                  Описание (необязательно)
+                  {t("profile.quizForm.quizDescriptionLabel")}
                 </Text>
                 <TextArea
-                  placeholder="Краткое описание вашей викторины"
+                  placeholder={t("profile.quizForm.quizDescriptionPlaceholder")}
                   {...register("description")}
                 />
               </label>
 
               <Heading size="4" mt="3">
-                Вопросы
+                {t("profile.quizForm.questionsTitle")}
               </Heading>
+
               {fields.map((field, index) => (
                 <Flex
                   key={field.id}
@@ -174,7 +193,11 @@ export default function QuizFormDialog({
                   }}
                 >
                   <Flex justify="between" align="center">
-                    <Text weight="bold">Вопрос {index + 1}</Text>
+                    <Text weight="bold">
+                      {t("profile.quizForm.questionLabel", {
+                        index: index + 1,
+                      })}
+                    </Text>
                     {fields.length > 1 && (
                       <IconButton
                         color="red"
@@ -188,19 +211,21 @@ export default function QuizFormDialog({
                   </Flex>
 
                   <TextArea
-                    placeholder="Текст вопроса"
+                    placeholder={t("profile.quizForm.questionPlaceholder")}
                     {...register(`questions.${index}.questionText`, {
-                      required: "Текст вопроса не может быть пустым",
+                      required: t(
+                        "profile.quizForm.validation.questionTextRequired",
+                      ),
                     })}
                   />
                   {errors.questions?.[index]?.questionText && (
                     <Text size="1" color="red">
-                      {errors.questions?.[index]?.questionText?.message}
+                      {errors.questions[index]?.questionText?.message}
                     </Text>
                   )}
 
                   <Text size="2" weight="bold" mt="2">
-                    Варианты ответа (выберите правильный)
+                    {t("profile.quizForm.optionsLabel")}
                   </Text>
                   <Controller
                     name={`questions.${index}.correctAnswerIndex`}
@@ -218,12 +243,16 @@ export default function QuizFormDialog({
                               <RadioGroup.Item value={String(optionIndex)} />
                               <TextField.Root
                                 style={{ flexGrow: 1 }}
-                                placeholder={`Вариант ${optionIndex + 1}`}
+                                placeholder={t(
+                                  "profile.quizForm.optionPlaceholder",
+                                  { index: optionIndex + 1 },
+                                )}
                                 {...register(
                                   `questions.${index}.options.${optionIndex}`,
                                   {
-                                    required:
-                                      "Вариант ответа не может быть пустым",
+                                    required: t(
+                                      "profile.quizForm.validation.optionRequired",
+                                    ),
                                   },
                                 )}
                               />
@@ -235,7 +264,7 @@ export default function QuizFormDialog({
                   />
                   {errors.questions?.[index]?.options && (
                     <Text size="1" color="red">
-                      Все 4 варианта ответа обязательны
+                      {t("profile.quizForm.validation.allOptionsRequired")}
                     </Text>
                   )}
                 </Flex>
@@ -253,7 +282,7 @@ export default function QuizFormDialog({
                     })
                   }
                 >
-                  <PlusIcon /> Добавить вопрос
+                  <PlusIcon /> {t("profile.quizForm.addQuestionBtn")}
                 </Button>
               )}
               {errors.questions?.root && (
@@ -268,7 +297,7 @@ export default function QuizFormDialog({
                     <InfoCircledIcon />
                   </Callout.Icon>
                   <Callout.Text>
-                    Произошла ошибка на сервере. Попробуйте позже.
+                    {t("profile.quizForm.errorServer")}
                   </Callout.Text>
                 </Callout.Root>
               )}
@@ -277,15 +306,15 @@ export default function QuizFormDialog({
             <Flex gap="3" mt="6" justify="end">
               <Dialog.Close>
                 <Button variant="soft" color="gray" type="button">
-                  Отмена
+                  {t("profile.quizForm.cancelBtn")}
                 </Button>
               </Dialog.Close>
               <Button type="submit" disabled={!isValid || isLoading}>
                 {isLoading
-                  ? "Сохранение..."
+                  ? t("profile.quizForm.saving")
                   : isEditMode
-                    ? "Сохранить изменения"
-                    : "Создать викторину"}
+                    ? t("profile.quizForm.saveChangesBtn")
+                    : t("profile.quizForm.createQuizBtn")}
               </Button>
             </Flex>
           </form>

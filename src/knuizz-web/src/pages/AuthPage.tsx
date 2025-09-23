@@ -4,8 +4,10 @@ import AuthForm from "../components/feature/auth/AuthForm.tsx";
 import { Button, Flex } from "@radix-ui/themes";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import { useTranslation } from "react-i18next";
 
 export default function AuthPage() {
+  const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
 
@@ -30,10 +32,10 @@ export default function AuthPage() {
           zIndex: 10,
           cursor: "pointer",
         }}
-        aria-label="Вернуться на главную"
+        aria-label={t("auth.backToHome")}
       >
         <ArrowLeftIcon width="18" height="18" />
-        На главную
+        {t("auth.backToHome")}
       </Button>
       <Flex align="center" justify="center" className="min-h-screen">
         <AuthForm isLoginMode={isLogin} onToggleMode={toggleForm} />

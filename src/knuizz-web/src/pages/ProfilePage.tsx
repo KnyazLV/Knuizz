@@ -28,7 +28,8 @@ import EditableUsername from "../components/feature/profile/EditableUsername.tsx
 import toast, { Toaster } from "react-hot-toast";
 import DonutChart from "../components/ui/DonutChart";
 import crownImage from "../shared/assets/crown.png";
-import type { MatchHistory } from "../shared/types/api";
+import type { MatchHistory } from "@/shared/types/api";
+import { useTranslation } from "react-i18next";
 
 function experienceForNextLevel(currentLevel: number): number {
   const baseExperience = 50.0;
@@ -37,6 +38,7 @@ function experienceForNextLevel(currentLevel: number): number {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
   );
@@ -79,11 +81,11 @@ export default function ProfilePage() {
 
     try {
       await updateUserProfile({ username: newUsername }).unwrap();
-      toast.success("Имя пользователя успешно изменено!", {
+      toast.success(t("profile.toastUsernameSuccess"), {
         style: toastStyle,
       });
     } catch (err) {
-      toast.error("Это имя уже занято. Попробуйте другое.", {
+      toast.error(t("profile.toastUsernameError"), {
         style: toastStyle,
       });
       throw err;
@@ -97,10 +99,7 @@ export default function ProfilePage() {
           <Callout.Icon>
             <InfoCircledIcon />
           </Callout.Icon>
-          <Callout.Text>
-            Не удалось загрузить данные профиля. Пожалуйста, попробуйте обновить
-            страницу.
-          </Callout.Text>
+          <Callout.Text>{t("profile.errorLoading")}</Callout.Text>
         </Callout.Root>
       </Flex>
     );
@@ -145,7 +144,7 @@ export default function ProfilePage() {
             onSave={handleUsernameSave}
           />
           <Text size="3" color="gray">
-            Уровень: {stats.level}
+            {t("profile.level")} {stats.level}
           </Text>
         </Flex>
       </Flex>
@@ -154,7 +153,7 @@ export default function ProfilePage() {
         {/* EXPERIENCE PROGRESS */}
         <Box className="w-full max-w-md">
           <Flex justify="between" mb="1">
-            <Text size="2">Опыт</Text>
+            <Text size="2">{t("profile.experience")}</Text>
             <Text size="2" color="gray">
               {stats.currentExperience} / {expToNextLevel}
             </Text>
@@ -166,13 +165,13 @@ export default function ProfilePage() {
         <Flex justify="between" className="w-full max-w-md">
           <Box>
             <Text as="div" size="2" color="gray">
-              Рейтинг
+              {t("profile.rating")}
             </Text>
             <Text weight="bold">{stats.rating}</Text>
           </Box>
           <Box className="text-right">
             <Text as="div" size="2" color="gray">
-              Место в топе
+              {t("profile.rank")}
             </Text>
             <Text weight="bold">{playerRank ? playerRank : "N/A"}</Text>
           </Box>
@@ -183,17 +182,21 @@ export default function ProfilePage() {
       <Flex className="w-full max-w-md" direction="row" gap="5">
         <Card className="w-full" style={{ flex: 1.5 }}>
           <Flex direction="column" gap="4" align="center" p="3">
-            <Heading>Последние матчи</Heading>
+            <Heading>{t("profile.matchHistory.title")}</Heading>
             {matchHistory.length > 0 ? (
               <Table.Root variant="surface" size="1" className="w-full">
                 <Table.Header>
-                  <Table.ColumnHeaderCell>Время</Table.ColumnHeaderCell>
-                  <Table.ColumnHeaderCell>Источник</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>
+                    {t("profile.matchHistory.timeHeader")}
+                  </Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>
+                    {t("profile.matchHistory.sourceHeader")}
+                  </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell justify="center">
-                    Ответы
+                    {t("profile.matchHistory.answersHeader")}
                   </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell justify="end">
-                    Рейтинг
+                    {t("profile.matchHistory.ratingHeader")}
                   </Table.ColumnHeaderCell>
                 </Table.Header>
                 <Table.Body>
@@ -241,13 +244,13 @@ export default function ProfilePage() {
               </Table.Root>
             ) : (
               <Text color="gray" align="center" className="mt-4">
-                У вас пока нет сыгранных матчей.
+                {t("profile.matchHistory.noMatches")}
               </Text>
             )}
           </Flex>
         </Card>
         <Card className="w-full max-w-md" style={{ flex: 2 }}>
-          <Heading align="center">Статистика</Heading>
+          <Heading align="center">{t("profile.statistics.title")}</Heading>
           <Flex
             justify="between"
             gap="4"
@@ -258,19 +261,25 @@ export default function ProfilePage() {
           >
             <Flex direction="column" gap="1">
               <Text size="5" color="gray">
-                Сыграно игр: {stats.totalGamesPlayed}
+                {t("profile.statistics.gamesPlayed", {
+                  count: stats.totalGamesPlayed,
+                })}
               </Text>
               <Text size="5" color="gray">
-                Правильных ответов: {stats.totalCorrectAnswers}
+                {t("profile.statistics.correctAnswers", {
+                  count: stats.totalCorrectAnswers,
+                })}
               </Text>
               <Text size="5" color="gray">
-                Всего ответов: {stats.totalAnswers}
+                {t("profile.statistics.totalAnswers", {
+                  count: stats.totalAnswers,
+                })}
               </Text>
             </Flex>
             <Flex justify="center" direction="column" gap="2">
               <DonutChart accuracy={accuracy} size={200} />
               <Text align="center" size="2">
-                Процент правильных ответов
+                {t("profile.statistics.accuracy")}
               </Text>
             </Flex>
           </Flex>

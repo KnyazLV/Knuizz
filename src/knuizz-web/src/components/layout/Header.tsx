@@ -2,14 +2,16 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Flex, Button, SegmentedControl, IconButton } from "@radix-ui/themes";
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { logout } from "../../features/auth/authSlice";
+import { useAppSelector, useAppDispatch } from "@/app/hooks.ts";
+import { logout } from "@/features/auth/authSlice.ts";
 
 import logo from "/logo.svg";
 import { ExitIcon } from "@radix-ui/react-icons";
-import { apiSlice } from "../../features/api/apiSlice.ts";
+import { apiSlice } from "@/features/api/apiSlice.ts";
+import { useTranslation } from "react-i18next";
 
 export default function Header() {
+  const { t, i18n } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -32,6 +34,10 @@ export default function Header() {
     dispatch(logout());
     dispatch(apiSlice.util.resetApiState());
     navigate("/");
+  };
+
+  const handleLanguageChange = (language: string) => {
+    i18n.changeLanguage(language);
   };
 
   return (
@@ -61,11 +67,12 @@ export default function Header() {
             className="text-base font-semibold uppercase transition-all duration-300 border-b-2 border-transparent hover:border-[var(--accent-9)]"
             style={{ color: "white" }}
           >
-            Таблица Лидеров
+            {t("header.leaderboard")}
           </Link>
           <SegmentedControl.Root
             style={{ background: "var(--sand-1)" }}
-            defaultValue="ru"
+            value={i18n.language}
+            onValueChange={handleLanguageChange}
           >
             <SegmentedControl.Item value="ru">RU</SegmentedControl.Item>
             <SegmentedControl.Item value="en">EN</SegmentedControl.Item>
@@ -75,11 +82,8 @@ export default function Header() {
             <>
               <Flex gap="1">
                 <Button variant="soft" onClick={goHome}>
-                  Профиль
+                  {t("header.profile")}
                 </Button>
-                {/*<Button variant="surface" color="red" onClick={handleLogout}>*/}
-                {/*  Выйти*/}
-                {/*</Button>*/}
                 <IconButton variant="soft" color="red" onClick={handleLogout}>
                   <ExitIcon></ExitIcon>
                 </IconButton>
@@ -87,7 +91,7 @@ export default function Header() {
             </>
           ) : (
             <Link to="/auth">
-              <Button>Войти</Button>
+              <Button>{t("header.login")}</Button>
             </Link>
           )}
         </Flex>

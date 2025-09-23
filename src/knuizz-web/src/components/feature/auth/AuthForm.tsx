@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   useLoginMutation,
   useRegisterMutation,
-} from "../../../features/api/apiSlice.ts";
+} from "@/features/api/apiSlice.ts";
 import {
   Box,
   Button,
@@ -23,10 +23,9 @@ import {
   EyeOpenIcon,
   EyeClosedIcon,
 } from "@radix-ui/react-icons";
+import { useTranslation } from "react-i18next";
 
-function parseApiError(err: unknown): string {
-  const defaultMessage = "Произошла ошибка. Попробуйте снова.";
-
+function parseApiError(err: unknown, defaultMessage: string): string {
   if (typeof err === "object" && err !== null && "data" in err) {
     const apiError = err as {
       data?: { message?: string; errors?: Record<string, string[]> } | string;
@@ -55,6 +54,7 @@ interface AuthFormProps {
 
 export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -91,7 +91,7 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
         setSuccessDialogOpen(true);
       }
     } catch (err) {
-      const message = parseApiError(err);
+      const message = parseApiError(err, t("auth.errorDefault"));
       setErrorMsg(message);
     }
   };
@@ -109,20 +109,20 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
         <form onSubmit={handleSubmit}>
           <Flex direction="column" gap="4">
             <Heading align="center" size="7">
-              {isLoginMode ? "Вход в аккаунт" : "Создание аккаунта"}
+              {isLoginMode ? t("auth.titleLogin") : t("auth.titleRegister")}
             </Heading>
 
             {!isLoginMode && (
               <Flex direction="column" gap="1">
                 <TextField.Root
                   size="3"
-                  placeholder="Имя пользователя"
+                  placeholder={t("auth.usernamePlaceholder")}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                 />
                 <Text size="1" color="gray">
-                  От 3 до 50 символов.
+                  {t("auth.usernameHelp")}
                 </Text>
               </Flex>
             )}
@@ -130,7 +130,7 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
             <TextField.Root
               size="3"
               type="email"
-              placeholder="Email"
+              placeholder={t("auth.emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -141,7 +141,7 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
                 <TextField.Root
                   size="3"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Пароль"
+                  placeholder={t("auth.passwordPlaceholder")}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -151,7 +151,9 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
                   onClick={() => setShowPassword(!showPassword)}
                   className="password-toggle-button"
                   aria-label={
-                    showPassword ? "Скрыть пароль" : "Показать пароль"
+                    showPassword
+                      ? t("auth.hidePassword")
+                      : t("auth.showPassword")
                   }
                 >
                   {showPassword ? <EyeClosedIcon /> : <EyeOpenIcon />}
@@ -159,7 +161,7 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
               </div>
               {!isLoginMode && (
                 <Text size="1" color="gray">
-                  Не менее 6 символов.
+                  {t("auth.passwordHelp")}
                 </Text>
               )}
             </Flex>
@@ -189,22 +191,24 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
                   checked={rememberMe}
                   onCheckedChange={(checked) => setRememberMe(Boolean(checked))}
                 />
-                Запомнить меня
+                {t("auth.rememberMe")}
               </Flex>
             </Text>
 
             <Button size="3" type="submit" disabled={isLoading} highContrast>
               {isLoading
-                ? "Загрузка..."
+                ? t("auth.loading")
                 : isLoginMode
-                  ? "Войти"
-                  : "Зарегистрироваться"}
+                  ? t("auth.loginButton")
+                  : t("auth.registerButton")}
             </Button>
 
             <Text size="2" align="center">
-              {isLoginMode ? "Нет аккаунта? " : "Уже есть аккаунт? "}
+              {isLoginMode
+                ? t("auth.noAccountPrompt")
+                : t("auth.alreadyHaveAccountPrompt")}
               <RadixLink onClick={onToggleMode} className="cursor-pointer ml-1">
-                {isLoginMode ? "Зарегистрироваться" : "Войти"}
+                {isLoginMode ? t("auth.registerButton") : t("auth.loginButton")}
               </RadixLink>
             </Text>
           </Flex>
@@ -213,15 +217,14 @@ export default function AuthForm({ isLoginMode, onToggleMode }: AuthFormProps) {
 
       <Dialog.Root open={isSuccessDialogOpen} onOpenChange={handleDialogClose}>
         <Dialog.Content style={{ maxWidth: 450 }}>
-          <Dialog.Title>Регистрация успешна</Dialog.Title>
+          <Dialog.Title>{t("auth.registerButton")}</Dialog.Title>
           <Dialog.Description size="2" mb="4">
-            Ваш аккаунт был успешно создан. Теперь вы можете войти, используя
-            свои данные.
+            {t("auth.registrationSuccessDescription")}
           </Dialog.Description>
           <Flex gap="3" mt="4" justify="end">
             <Dialog.Close>
               <Button variant="soft" color="gray">
-                Отлично!
+                {t("auth.registrationSuccessOk")}
               </Button>
             </Dialog.Close>
           </Flex>

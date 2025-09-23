@@ -10,6 +10,7 @@ import {
 import { useSound } from "../../hooks/useSound.tsx";
 import { StarFilledIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import AnimatedNumber from "./AnimatedNumber.tsx";
+import { useTranslation } from "react-i18next";
 
 interface LevelUpModalProps {
   oldLevel: number;
@@ -24,6 +25,7 @@ export default function LevelUpModal({
   isOpen,
   onClose,
 }: LevelUpModalProps) {
+  const { t } = useTranslation();
   const { playSound } = useSound();
   const [isAnimatingNumber, setIsAnimatingNumber] = useState(false);
 
@@ -47,13 +49,13 @@ export default function LevelUpModal({
           <StarFilledIcon width="56" height="56" color="var(--accent-9)" />
 
           <Dialog.Title size="8" mt="2">
-            Повышение уровня!
+            {t("game.levelUp.header")}
           </Dialog.Title>
 
           <Separator size="4" my="2" style={{ width: "60%" }} />
 
           <Text size="3" color="gray">
-            Продолжайте в том же духе, знаток!
+            {t("game.levelUp.message")}
           </Text>
           <Flex align="center" justify="center" gap="6" my="3">
             <Flex direction="column" align="center" gap="1">
@@ -88,7 +90,7 @@ export default function LevelUpModal({
               variant="soft"
               highContrast
             >
-              Отлично!
+              {t("game.levelUp.gotIt")}
             </Button>
           </Dialog.Close>
         </Flex>

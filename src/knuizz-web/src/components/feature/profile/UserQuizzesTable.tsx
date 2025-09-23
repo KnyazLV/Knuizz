@@ -3,7 +3,7 @@ import {
   useDeleteQuizMutation,
   useGetUserQuizzesQuery,
   useUpdateQuizPublicationMutation,
-} from "../../../features/api/apiSlice.ts";
+} from "@/features/api/apiSlice.ts";
 import {
   Table,
   Flex,
@@ -29,12 +29,14 @@ import {
 import QuizFormDialog from "./QuizFormDialog.tsx";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 interface UserQuizzesTableProps {
   userId: string;
 }
 
 export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
+  const { t } = useTranslation();
   const {
     data: quizzes,
     isLoading,
@@ -54,20 +56,25 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
   const handleDeleteQuiz = async (id: string) => {
     try {
       await deleteQuiz(id).unwrap();
-      toast.success("Викторина успешно удалена.");
+      toast.success(t("profile.quizTable.toastDeleted"));
     } catch {
-      toast.error("Не удалось удалить викторину.");
+      toast.error(t("profile.quizTable.toastDeleteError"));
     }
   };
 
   const handleTogglePublish = async (id: string, isPublished: boolean) => {
     try {
       await updateQuizPublication({ id, isPublished: !isPublished }).unwrap();
+      const newStatus = t(
+        isPublished
+          ? "profile.quizTable.statusPrivate"
+          : "profile.quizTable.statusPublic",
+      );
       toast.success(
-        `Статус викторины изменен на "${!isPublished ? "Публичная" : "Приватная"}".`,
+        t("profile.quizTable.toastStatusChanged", { status: newStatus }),
       );
     } catch {
-      toast.error("Не удалось изменить статус.");
+      toast.error(t("profile.quizTable.toastStatusError"));
     }
   };
 
@@ -86,9 +93,7 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
           <Callout.Icon>
             <InfoCircledIcon />
           </Callout.Icon>
-          <Callout.Text>
-            Не удалось загрузить ваши викторины. Попробуйте снова.
-          </Callout.Text>
+          <Callout.Text>{t("profile.quizTable.errorLoading")}</Callout.Text>
         </Callout.Root>
       </Flex>
     );
@@ -99,34 +104,33 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
       <Card className="w-full">
         <Flex direction="column" gap="4" p="4">
           <Flex justify="between" align="center">
-            <Heading>Мои викторины</Heading>
+            <Heading>{t("profile.quizTable.title")}</Heading>
             <Button
               onClick={() => setDialogState({ open: true, quizId: undefined })}
             >
               <PlusIcon width="16" height="16" />
-              Создать
+              {t("profile.quizTable.createBtn")}
             </Button>
           </Flex>
 
           {quizzes && quizzes.length > 0 ? (
             <Table.Root variant="surface">
               <Table.Header>
-                {/* ... заголовки таблицы ... */}
                 <Table.Row>
                   <Table.ColumnHeaderCell justify="start">
-                    Название
+                    {t("profile.quizTable.nameHeader")}
                   </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell justify="center">
-                    Дата создания
+                    {t("profile.quizTable.createdHeader")}
                   </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell justify="center">
-                    Вопросов
+                    {t("profile.quizTable.questionsHeader")}
                   </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell justify="center">
-                    Статус
+                    {t("profile.quizTable.statusHeader")}
                   </Table.ColumnHeaderCell>
                   <Table.ColumnHeaderCell justify="end">
-                    Действия
+                    {t("profile.quizTable.actionsHeader")}
                   </Table.ColumnHeaderCell>
                 </Table.Row>
               </Table.Header>
@@ -149,13 +153,15 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
                     </Table.Cell>
                     <Table.Cell justify="center">
                       <Badge color={quiz.isPublished ? "green" : "gray"}>
-                        {quiz.isPublished ? "Публичная" : "Приватная"}
+                        {quiz.isPublished
+                          ? t("profile.quizTable.statusPublic")
+                          : t("profile.quizTable.statusPrivate")}
                       </Badge>
                     </Table.Cell>
                     <Table.Cell justify="end">
                       <Flex justify="end" gap="3">
                         <IconButton
-                          title="Редактировать"
+                          title={t("profile.quizTable.editTooltip")}
                           variant="soft"
                           onClick={() =>
                             setDialogState({ open: true, quizId: quiz.id })
@@ -166,8 +172,8 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
                         <IconButton
                           title={
                             quiz.isPublished
-                              ? "Сделать приватной"
-                              : "Сделать публичной"
+                              ? t("profile.quizTable.makePrivateTooltip")
+                              : t("profile.quizTable.makePublicTooltip")
                           }
                           variant="soft"
                           color="blue"
@@ -184,7 +190,7 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
                         <AlertDialog.Root>
                           <AlertDialog.Trigger>
                             <IconButton
-                              title="Удалить"
+                              title={t("profile.quizTable.deleteTooltip")}
                               variant="soft"
                               color="red"
                             >
@@ -193,16 +199,17 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
                           </AlertDialog.Trigger>
                           <AlertDialog.Content style={{ maxWidth: 450 }}>
                             <AlertDialog.Title>
-                              Подтвердите удаление
+                              {t("profile.quizTable.confirmDeleteTitle")}
                             </AlertDialog.Title>
                             <AlertDialog.Description size="2">
-                              Вы уверены, что хотите удалить викторину "
-                              {quiz.title}"? Это действие необратимо.
+                              {t("profile.quizTable.confirmDeleteDescription", {
+                                title: quiz.title,
+                              })}
                             </AlertDialog.Description>
                             <Flex gap="3" mt="4" justify="end">
                               <AlertDialog.Cancel>
                                 <Button variant="soft" color="gray">
-                                  Отмена
+                                  {t("profile.quizTable.cancelBtn")}
                                 </Button>
                               </AlertDialog.Cancel>
                               <AlertDialog.Action>
@@ -211,7 +218,7 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
                                   color="red"
                                   onClick={() => handleDeleteQuiz(quiz.id)}
                                 >
-                                  Удалить
+                                  {t("profile.quizTable.deleteBtn")}
                                 </Button>
                               </AlertDialog.Action>
                             </Flex>
@@ -232,8 +239,7 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
               }}
             >
               <Text color="gray" align="center">
-                Вы еще не создали ни одной викторины. Нажмите "Создать", чтобы
-                начать!
+                {t("profile.quizTable.noQuizzes")}
               </Text>
             </Box>
           )}

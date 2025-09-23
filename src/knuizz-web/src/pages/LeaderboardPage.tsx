@@ -1,5 +1,4 @@
-﻿// src/pages/LeaderboardPage.tsx
-import {
+﻿import {
   Flex,
   Heading,
   Table,
@@ -16,11 +15,18 @@ import UserStatsHoverCard from "../components/ui/UserStatsHoverCard";
 import crownImage from "../shared/assets/crown.png";
 import AnimatedWhenNotice from "../components/ui/AnimatedWhenNotice";
 import FloatingElement from "../components/ui/FloatingElement.tsx";
-import { FloatingElementType } from "../shared/types/FloatingElementType.ts"; // <-- Импортируем наш компонент
+import { FloatingElementType } from "../shared/types/FloatingElementType.ts";
+import { useTranslation } from "react-i18next";
 
 export default function LeaderboardPage() {
+  const { t } = useTranslation();
   const { data: entries = [], isLoading, isError } = useGetLeaderboardQuery(50);
 
+  const podiumPlaceKeys = [
+    "leaderboard.podium.second",
+    "leaderboard.podium.first",
+    "leaderboard.podium.third",
+  ];
   const topThree = entries.slice(0, 3);
   const podiumOrder =
     topThree.length === 3 ? [topThree[1], topThree[0], topThree[2]] : [];
@@ -123,10 +129,9 @@ export default function LeaderboardPage() {
       <AnimatedWhenNotice animationName="fadeInUp">
         <Box className="text-center">
           <Heading size="8" className="uppercase text-gradient">
-            Таблица лидеров
+            {t("leaderboard.title")}
           </Heading>
           <Quote>Scientia potentia est</Quote>
-          {/*<Text style={{ fontStyle: "italic" }}>Scientia potentia est</Text>*/}
         </Box>
       </AnimatedWhenNotice>
 
@@ -147,10 +152,7 @@ export default function LeaderboardPage() {
             <Callout.Icon>
               <InfoCircledIcon />
             </Callout.Icon>
-            <Callout.Text>
-              Ошибка загрузки таблицы лидеров. Пожалуйста, попробуйте обновить
-              страницу.
-            </Callout.Text>
+            <Callout.Text>{t("leaderboard.errorLoading")}</Callout.Text>
           </Callout.Root>
         </Flex>
       )}
@@ -163,7 +165,7 @@ export default function LeaderboardPage() {
             className="w-full max-w-lg min-h-[300px]"
           >
             {podiumOrder.map((player, index) => {
-              const place = ["2nd", "1st", "3rd"][index];
+              const placeKey = podiumPlaceKeys[index];
               const style = podiumStyles[index];
 
               return (
@@ -188,7 +190,7 @@ export default function LeaderboardPage() {
                           weight="bold"
                           style={{ color: "var(--slate-a5)" }}
                         >
-                          {place}
+                          {t(placeKey)}
                         </Text>
                       </Flex>
                     </Box>
@@ -198,10 +200,10 @@ export default function LeaderboardPage() {
                       gap="1"
                       className="mb-4 relative"
                     >
-                      {place === "1st" && (
+                      {placeKey === "leaderboard.podium.first" && (
                         <img
                           src={crownImage}
-                          alt="Crown"
+                          alt={t("leaderboard.crownAlt")}
                           className="mb-1 crown-glow"
                           style={{
                             position: "absolute",
@@ -212,14 +214,16 @@ export default function LeaderboardPage() {
                       )}
                       <UserStatsHoverCard
                         userId={player.userId}
-                        username={player.username || "Неизвестный"}
+                        username={
+                          player.username || t("leaderboard.unknownPlayer")
+                        }
                       >
                         <Flex direction="column" align="center">
                           <Text size="6" weight="bold" trim="both">
-                            {player.username || "Неизвестный"}
+                            {player.username || t("leaderboard.unknownPlayer")}
                           </Text>
                           <Text size="2" color="gray">
-                            Рейтинг: {player.rating}
+                            {t("leaderboard.ratingLabel")} {player.rating}
                           </Text>
                         </Flex>
                       </UserStatsHoverCard>
@@ -240,13 +244,13 @@ export default function LeaderboardPage() {
                 <Table.Header>
                   <Table.Row>
                     <Table.ColumnHeaderCell width="15%" justify="start">
-                      Место
+                      {t("leaderboard.table.rankHeader")}
                     </Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell justify="center">
-                      Игрок
+                      {t("leaderboard.table.playerHeader")}
                     </Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell width="15%" justify="end">
-                      Рейтинг
+                      {t("leaderboard.table.ratingHeader")}
                     </Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
@@ -262,10 +266,12 @@ export default function LeaderboardPage() {
                         <div style={{ display: "inline-block" }}>
                           <UserStatsHoverCard
                             userId={entry.userId}
-                            username={entry.username || "Неизвестный"}
+                            username={
+                              entry.username || t("leaderboard.unknownPlayer")
+                            }
                           >
                             <Text weight="bold">
-                              {entry.username || "Неизвестный"}
+                              {entry.username || t("leaderboard.unknownPlayer")}
                             </Text>
                           </UserStatsHoverCard>
                         </div>

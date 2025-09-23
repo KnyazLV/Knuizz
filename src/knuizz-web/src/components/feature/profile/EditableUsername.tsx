@@ -79,10 +79,8 @@ export default function EditableUsername({
   }
 
   return (
-    // ИСПРАВЛЕНИЕ 3: Добавляем контейнер для абсолютного позиционирования
     <Flex align="center" gap="3" className="relative pr-8">
       {" "}
-      {/* Добавляем padding справа, чтобы было место для иконки */}
       <Heading size="8">{initialUsername}</Heading>
       <IconButton
         onClick={() => setIsEditing(true)}

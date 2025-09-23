@@ -7,6 +7,7 @@ import { Theme } from "@radix-ui/themes";
 import "animate.css";
 import "@radix-ui/themes/styles.css";
 import "./index.css";
+import "@/shared/i18n";
 
 import { store } from "./app/store.ts";
 import { router } from "./app/routes.tsx";

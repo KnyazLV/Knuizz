@@ -1,0 +1,243 @@
+﻿{
+  "header": {
+    "leaderboard": "Таблица лидеров",
+    "profile": "Профиль",
+    "login": "Войти",
+    "logout": "Выйти",
+    "logoAlt": "Логотип Knuizz"
+  },
+  "homePage": {
+    "gameTitle": "Викторина",
+    "mainHeading": "Испытай свою эрудицию",
+    "description": "Проверь свои знания в самых разных категориях — от науки до поп-культуры и состязайся с другими знатоками за титул Князя знаний!",
+    "startGame": "Начать игру",
+    "back": "Назад",
+    "aboutProjectBadge": "Pet-проект с открытым исходным кодом",
+    "aboutProjectTitle": "О проекте Knuizz",
+    "aboutProjectDescription1": "<0>Knuizz</0> — это платформа для викторин, созданная в рамках демонстрации навыков full-stack разработки. Проект полностью открыт и продолжает развиваться.",
+    "aboutProjectDescription2": "Если вы встречаете баги, то смело сообщайте о них мне на почту: <1>r.belovs@inbox.lv</1>. Это ученический пет-проект, поэтому я уверен, что в нём ещё множество ошибок.",
+    "sourceCode": "Исходный код",
+    "featureQuickRoundsTitle": "Быстрые раунды",
+    "featureQuickRoundsDescription": "Играйте в любое время и в любом месте. Один раунд викторины занимает всего несколько минут, идеально подходит для коротких перерывов.",
+    "featureApiTitle": "REST API",
+    "featureApiDescription": "Полнофункциональное API для разработчиков. Создавайте собственные клиенты, ботов или интегрируйте викторины в свои приложения.",
+    "featureRatingTitle": "Рейтинг и прогресс",
+    "featureRatingDescription": "Отслеживайте свои достижения, соревнуйтесь с другими игроками и поднимайтесь в таблице лидеров.",
+    "questionsInDb": "Вопросов в базе"
+  },
+  "footer": {
+    "madeBy": "Создано Ростиславом Беловым",
+    "copyright": "Copyright © {{year}} Все права защищены"
+  },
+  "reminderPopup": {
+    "registerPrompt": "Зарегистрируйтесь, чтобы получать больше возможностей и сохранять прогресс.",
+    "gotIt": "Понятно!"
+  },
+  "gameModeSelector": {
+    "title": "Настройте вашу викторину",
+    "sourcesHeading": "Источники",
+    "descriptionHeading": "Описание",
+    "startButton": "Начать",
+    "loginRequiredMessage": "Пожалуйста, войдите в систему, чтобы использовать этот режим.",
+    "errorLoadQuestions": "Не удалось загрузить вопросы. Попробуйте другой источник.",
+    "errorStartGame": "Произошла ошибка при запуске игры.",
+    "sourceLabel": "Источник",
+    "sources": {
+      "trivia_api": {
+        "label": "Викторина Trivia API",
+        "description": "Набор случайных вопросов на английском языке на самые разные темы из открытого источника Trivia API. Отличный выбор для быстрой разминки и проверки эрудиции."
+      },
+      "wwtbm_ru": {
+        "label": "Кто хочет стать миллионером",
+        "description": "Классические вопросы на русском языке из базы, вдохновленной знаменитым телешоу. Сборник содержит вопросы передачи на момент декабря 2003г. Автор: Сергей Зубарь."
+      },
+      "wwtbm_en": {
+        "label": "Кто хочет стать миллионером",
+        "description": "База данных собранная анонимным пользователем с Reddit, основанная на вопросах из GameFAQs в формате известной телепередачи \"Кто хочет стать миллионеom\""
+      },
+      "my_quizzes": {
+        "label": "Мои викторины",
+        "description": ""
+      },
+      "search_quizzes": {
+        "label": "Поиск викторин",
+        "description": ""
+      }
+    }
+  },
+  "userQuizzesView": {
+    "myQuizzesTitle": "Мои викторины",
+    "searchResultsTitle": "Результаты поиска",
+    "emptyListMessage": "Список пуст.",
+    "searchPlaceholder": "Введите название викторины для поиска...",
+    "questionsCount": "{{count}} вопросов",
+    "byAuthor": "от {{authorName}}"
+  },
+  "auth": {
+    "titleLogin": "Вход в аккаунт",
+    "titleRegister": "Создание аккаунта",
+    "usernamePlaceholder": "Имя пользователя",
+    "usernameHelp": "От 3 до 50 символов.",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Пароль",
+    "passwordHelp": "Не менее 6 символов.",
+    "showPassword": "Показать пароль",
+    "hidePassword": "Скрыть пароль",
+    "rememberMe": "Запомнить меня",
+    "loading": "Загрузка...",
+    "loginButton": "Войти",
+    "registerButton": "Зарегистрироваться",
+    "noAccountPrompt": "Нет аккаунта? ",
+    "alreadyHaveAccountPrompt": "Уже есть аккаунт? ",
+    "registrationSuccessTitle": "Регистрация успешна",
+    "registrationSuccessDescription": "Ваш аккаунт был успешно создан. Теперь вы можете войти, используя свои данные.",
+    "registrationSuccessOk": "Отлично!",
+    "errorDefault": "Произошла ошибка. Попробуйте снова.",
+    "backToHome": "На главную"
+  },
+  "game": {
+    "summary": {
+      "gameOverTitle": "Игра окончена!",
+      "correctAnswersLabel": "Правильные ответы:",
+      "correctAnswersValue": "{{score}} из {{total}}",
+      "timeSpentLabel": "Затраченное время:",
+      "duration": {
+        "seconds": "{{count}} сек.",
+        "minutesSeconds": "{{minutes}} мин. {{seconds}} сек."
+      },
+      "savingResults": "Сохраняем результаты...",
+      "xpGainedLabel": "Получено опыта:",
+      "ratingChangeLabel": "Изменение рейтинга:",
+      "noXpForCustom": "Опыт и рейтинг за прохождение пользовательских викторин не начисляется.",
+      "errorSaving": "Не удалось сохранить результаты.",
+      "loginPrompt": "<0>Войдите или зарегистрируйтесь</0>, чтобы сохранять прогресс и соревноваться в рейтинге!",
+      "backToHomeBtn": "Вернуться на главную"
+    },
+    "play": {
+      "loading": "Загрузка вопросов...",
+      "timeLeftLabel": "Осталось времени:",
+      "timeLeftValue": "{{count}}с",
+      "questionProgress": "Вопрос {{current}} из {{total}}"
+    },
+    "levelUp": {
+      "header": "Повышение уровня!",
+      "message": "Продолжайте в том же духе, знаток!",
+      "gotIt": "Отлично!"
+    }
+  },
+  "profile": {
+    "loading": "Загрузка...",
+    "errorLoading": "Не удалось загрузить данные профиля. Пожалуйста, попробуйте обновить страницу.",
+    "level": "Уровень:",
+    "experience": "Опыт",
+    "rating": "Рейтинг",
+    "rank": "Место в топе",
+    "toastUsernameSuccess": "Имя пользователя успешно изменено!",
+    "toastUsernameError": "Это имя уже занято. Попробуйте другое.",
+
+    "statistics": {
+      "title": "Статистика",
+      "gamesPlayed": "Сыграно игр: {{count}}",
+      "correctAnswers": "Правильных ответов: {{count}}",
+      "totalAnswers": "Всего ответов: {{count}}",
+      "accuracy": "Процент правильных ответов"
+    },
+
+    "matchHistory": {
+      "title": "Последние матчи",
+      "noMatches": "У вас пока нет сыгранных матчей.",
+      "timeHeader": "Время",
+      "sourceHeader": "Источник",
+      "answersHeader": "Ответы",
+      "ratingHeader": "Рейтинг"
+    },
+
+    "quizTable": {
+      "title": "Мои викторины",
+      "createBtn": "Создать",
+      "noQuizzes": "Вы еще не создали ни одной викторины. Нажмите \"Создать\", чтобы начать!",
+      "errorLoading": "Не удалось загрузить ваши викторины. Попробуйте снова.",
+      "nameHeader": "Название",
+      "createdHeader": "Дата создания",
+      "questionsHeader": "Вопросов",
+      "statusHeader": "Статус",
+      "actionsHeader": "Действия",
+      "statusPublic": "Публичная",
+      "statusPrivate": "Приватная",
+      "editTooltip": "Редактировать",
+      "makePrivateTooltip": "Сделать приватной",
+      "makePublicTooltip": "Сделать публичной",
+      "deleteTooltip": "Удалить",
+      "confirmDeleteTitle": "Подтвердите удаление",
+      "confirmDeleteDescription": "Вы уверены, что хотите удалить викторину \"{{title}}\"? Это действие необратимо.",
+      "cancelBtn": "Отмена",
+      "deleteBtn": "Удалить",
+      "toastDeleted": "Викторина успешно удалена.",
+      "toastDeleteError": "Не удалось удалить викторину.",
+      "toastStatusChanged": "Статус викторины изменен на \"{{status}}\".",
+      "toastStatusError": "Не удалось изменить статус."
+    },
+
+    "quizForm": {
+      "createTitle": "Создание новой викторины",
+      "editTitle": "Редактирование викторины",
+      "createDescription": "Заполните информацию о викторине и добавьте до 30 вопросов.",
+      "editDescription": "Измените данные вашей викторины.",
+      "loading": "Загрузка данных викторины...",
+      "quizNameLabel": "Название викторины",
+      "quizNamePlaceholder": "Например, 'Столицы мира'",
+      "quizDescriptionLabel": "Описание (необязательно)",
+      "quizDescriptionPlaceholder": "Краткое описание вашей викторины",
+      "questionsTitle": "Вопросы",
+      "questionLabel": "Вопрос {{index}}",
+      "questionPlaceholder": "Текст вопроса",
+      "optionsLabel": "Варианты ответа (выберите правильный)",
+      "optionPlaceholder": "Вариант {{index}}",
+      "addQuestionBtn": "Добавить вопрос",
+      "errorServer": "Произошла ошибка на сервере. Попробуйте позже.",
+      "saving": "Сохранение...",
+      "saveChangesBtn": "Сохранить изменения",
+      "createQuizBtn": "Создать викторину",
+      "cancelBtn": "Отмена",
+      "toastCreated": "Викторина успешно создана!",
+      "toastUpdated": "Викторина успешно обновлена!",
+      "toastCreateError": "Ошибка при создании.",
+      "toastUpdateError": "Ошибка при обновлении.",
+      "validation": {
+        "atLeastOneQuestion": "Нужен хотя бы один вопрос",
+        "maxQuestions": "Максимум 30 вопросов",
+        "titleRequired": "Название обязательно",
+        "titleMinLength": "Минимум 3 символа",
+        "titleMaxLength": "Максимум 255 символов",
+        "questionTextRequired": "Текст вопроса не может быть пустым",
+        "optionRequired": "Вариант ответа не может быть пустым",
+        "allOptionsRequired": "Все 4 варианта ответа обязательны"
+      }
+    }
+  },
+  "userStatsHoverCard": {
+    "errorLoading": "Не удалось загрузить статистику.",
+    "ratingLabel": "Рейтинг:",
+    "levelLabel": "Уровень:",
+    "totalGamesLabel": "Всего игр:",
+    "accuracyLabel": "Точность ответов:",
+    "notAvailable": "Н/Д"
+  },
+  "leaderboard": {
+    "title": "Таблица лидеров",
+    "errorLoading": "Ошибка загрузки таблицы лидеров. Пожалуйста, попробуйте обновить страницу.",
+    "unknownPlayer": "Неизвестный",
+    "ratingLabel": "Рейтинг:",
+    "crownAlt": "Корона",
+    "podium": {
+      "first": "1-й",
+      "second": "2-й",
+      "third": "3-й"
+    },
+    "table": {
+      "rankHeader": "Место",
+      "playerHeader": "Игрок",
+      "ratingHeader": "Рейтинг"
+    }
+  }
+}

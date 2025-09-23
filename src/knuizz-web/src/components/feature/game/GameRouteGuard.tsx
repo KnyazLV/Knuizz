@@ -1,7 +1,7 @@
 ﻿// src/components/feature/game/GameRouteGuard.tsx
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import type { RootState } from "../../../app/store";
+import type { RootState } from "@/app/store.ts";
 
 export default function GameRouteGuard() {
   const gameStatus = useSelector((state: RootState) => state.game.gameStatus);

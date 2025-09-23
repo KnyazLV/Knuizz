@@ -6,12 +6,14 @@ import { answerQuestion, resetGame } from "../features/game/gameSlice";
 import { Box, Heading, Button, Flex, Text, Progress } from "@radix-ui/themes";
 import GameSummary from "../components/feature/game/GameSummary.tsx";
 import { useSound } from "../hooks/useSound.tsx";
+import { useTranslation } from "react-i18next";
 
 const PRE_TIMER_DELAY = 5000;
 const ANIMATION_DURATION = 200;
 const TIMEOUT_SOUND_DURATION_MS = 3000;
 
 export default function GamePage() {
+  const { t } = useTranslation();
   const { playSound, stopSound } = useSound();
   const dispatch = useDispatch();
   const {
@@ -146,7 +148,7 @@ export default function GamePage() {
   }
 
   if (!questions || questions.length === 0 || !gameId) {
-    return <Heading>Загрузка вопросов...</Heading>;
+    return <Heading>{t("game.play.loading")}</Heading>;
   }
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -167,16 +169,19 @@ export default function GamePage() {
         >
           <Flex justify="between" align="center" mb="2">
             <Text size="5" color="gray">
-              Осталось времени:
+              {t("game.play.timeLeftLabel")}
             </Text>
             <Text size="8" weight="bold">
-              {timeLeftText}с
+              {t("game.play.timeLeftValue", { count: timeLeftText })}
             </Text>
           </Flex>
           <Progress value={progress} size="3" mb="4" />
 
           <Text size="4" color="gray" align="center" mb="6">
-            Вопрос {currentQuestionIndex + 1} из {questions.length}
+            {t("game.play.questionProgress", {
+              current: currentQuestionIndex + 1,
+              total: questions.length,
+            })}
           </Text>
           <Heading size="8" align="center" mb="6">
             {currentQuestion.questionText}

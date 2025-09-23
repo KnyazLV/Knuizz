@@ -1,7 +1,10 @@
 ﻿// src/components/layout/Footer.tsx
 import { Flex, Text } from "@radix-ui/themes";
+import { useTranslation } from "react-i18next";
 
 export default function Footer() {
+  const { t } = useTranslation();
+  const currentYear = new Date().getFullYear();
   return (
     <footer
       className="border-t border-[var(--slate-a6)]"
@@ -18,10 +21,10 @@ export default function Footer() {
         gap="4"
       >
         <Text size="2" color="gray">
-          Made by Rostislavs Belovs
+          {t("footer.madeBy")}
         </Text>
         <Text size="2" color="gray">
-          Copyright © {new Date().getFullYear()} All rights reserved
+          {t("footer.copyright", { year: currentYear })}
         </Text>
       </Flex>
     </footer>

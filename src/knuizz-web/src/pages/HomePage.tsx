@@ -26,10 +26,11 @@ import { FloatingElementType } from "../shared/types/FloatingElementType.ts";
 import GameModeSelector from "../components/feature/gameSetup/GameModeSelector.tsx";
 import { useState } from "react";
 import ReminderPopup from "../components/ui/ReminderPopup.tsx";
+import { Trans, useTranslation } from "react-i18next";
 
 export default function HomePage() {
   const [showLobby, setShowLobby] = useState(false);
-
+  const { t } = useTranslation();
   return (
     <>
       {showLobby ? (
@@ -47,11 +48,11 @@ export default function HomePage() {
                 variant="ghost"
                 color="gray"
                 highContrast
-                aria-label="Назад"
+                aria-label={t("homePage.back")}
                 m="2"
               >
                 <ArrowLeftIcon width="18" height="18" />
-                Назад
+                {t("homePage.back")}
               </Button>
               <GameModeSelector />
             </div>
@@ -116,11 +117,11 @@ export default function HomePage() {
             as="span"
             className="uppercase animate__animated animate__fadeInDown"
           >
-            Викторина
+            {t("homePage.gameTitle")}
           </Text>
 
           <AnimatedHeading
-            text="Испытай свою эрудицию"
+            text={t("homePage.mainHeading")}
             size="9"
             align="center"
             mt="3"
@@ -136,14 +137,12 @@ export default function HomePage() {
             style={{ maxWidth: "600px" }}
             className="animate__animated animate__fadeInUp animate__delay-1s"
           >
-            Проверь свои знания в самых разных категориях — от науки до
-            поп-культуры и состязайся с другими знатоками за титул Князя знаний!
+            {t("homePage.description")}
           </Text>
 
-          {/* 6. Кнопка теперь управляет состоянием showLobby */}
           <div className="animate__animated animate__fadeIn animate__delay-2s">
             <Button size="4" highContrast onClick={() => setShowLobby(true)}>
-              Начать игру
+              {t("homePage.startGame")}
             </Button>
           </div>
         </Section>
@@ -171,24 +170,21 @@ export default function HomePage() {
                 className="animate__animated animate__slideInUp text-center"
               >
                 <Badge color="purple" className="self-center">
-                  Pet-проект с открытым исходным кодом
+                  {t("homePage.aboutProjectBadge")}
                 </Badge>
                 <Heading size="8" className="text-gradient">
-                  О проекте Knuizz
+                  {t("homePage.aboutProjectTitle")}
                 </Heading>
 
                 <Text as="p" size="5" color="gray">
-                  <Strong className="text-[var(--accent-11)]">Knuizz</Strong> —
-                  это платформа для викторин, созданная в рамках демонстрации
-                  навыков full-stack разработки. Проект полностью открыт и
-                  продолжает развиваться.
+                  <Trans i18nKey="homePage.aboutProjectDescription1">
+                    <Strong className="text-[var(--accent-11)]">Knuizz</Strong>
+                  </Trans>
                 </Text>
                 <Text as="p" size="5" color="gray">
-                  Если вы встречаете баги, то смело сообщайте о них мне на
-                  почту:{" "}
-                  <a href="mailto:r.belovs@inbox.lv">r.belovs@inbox.lv</a> . Это
-                  ученический пет-проект, поэтому я уверен, что в нём ещё
-                  множество ошибок.
+                  <Trans i18nKey="homePage.aboutProjectDescription2">
+                    <a href="mailto:r.belovs@inbox.lv">r.belovs@inbox.lv</a>
+                  </Trans>
                 </Text>
                 <Button variant="soft" size="3" asChild className="self-center">
                   <RadixLink
@@ -196,7 +192,7 @@ export default function HomePage() {
                     target="_blank"
                   >
                     <GitHubLogoIcon />
-                    Исходный код
+                    {t("homePage.sourceCode")}
                   </RadixLink>
                 </Button>
               </Flex>
@@ -221,13 +217,11 @@ export default function HomePage() {
                       className="text-[var(--accent-11)]"
                     />
                     <Heading size="4" className="text-[var(--slate-12)]">
-                      Быстрые раунды
+                      {t("homePage.featureQuickRoundsTitle")}
                     </Heading>
                   </Flex>
                   <Text as="p" className="text-center" size="3" color="gray">
-                    Играйте в любое время и в любом месте. Один раунд викторины
-                    занимает всего несколько минут, идеально подходит для
-                    коротких перерывов.
+                    {t("homePage.featureQuickRoundsDescription")}
                   </Text>
                 </Box>
               </AnimatedWhenNotice>
@@ -245,13 +239,11 @@ export default function HomePage() {
                       className="text-[var(--accent-11)]"
                     />
                     <Heading size="4" className="text-[var(--slate-12)]">
-                      REST API
+                      {t("homePage.featureApiTitle")}
                     </Heading>
                   </Flex>
                   <Text as="p" className="text-center" size="3" color="gray">
-                    Полнофункциональное API для разработчиков. Создавайте
-                    собственные клиенты, ботов или интегрируйте викторины в свои
-                    приложения.
+                    {t("homePage.featureApiDescription")}
                   </Text>
                 </Box>
               </AnimatedWhenNotice>
@@ -269,12 +261,11 @@ export default function HomePage() {
                       className="text-[var(--accent-11)]"
                     />
                     <Heading size="4" className="text-[var(--slate-12)]">
-                      Рейтинг и прогресс
+                      {t("homePage.featureRatingTitle")}
                     </Heading>
                   </Flex>
                   <Text as="p" className="text-center" size="3" color="gray">
-                    Отслеживайте свои достижения, соревнуйтесь с другими
-                    игроками и поднимайтесь в таблице лидеров.
+                    {t("homePage.featureRatingDescription")}
                   </Text>
                 </Box>
               </AnimatedWhenNotice>
@@ -282,7 +273,7 @@ export default function HomePage() {
             <Box pt="3" className="text-center">
               <AnimatedCounter endValue={10000} duration={2500} />
               <Text size="5" color="gray" weight="medium">
-                Вопросов в базе
+                {t("homePage.questionsInDb")}
               </Text>
             </Box>
           </Flex>
