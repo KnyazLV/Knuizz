@@ -160,12 +160,12 @@ export default function GamePage() {
         direction="column"
         align="center"
         justify="center"
-        style={{ padding: "5vh 0", minHeight: "90vh" }}
+        style={{ padding: "5vh 10px", minHeight: "90vh" }}
       >
         <Box
           key={currentQuestionIndex}
           className={`animate__animated ${isTransitioning ? "animate__fadeOut" : "animate__fadeIn"}`}
-          style={{ width: "100%", maxWidth: "1200px" }}
+          style={{ width: "100%", maxWidth: "1200px", padding: "0 10" }}
         >
           <Flex justify="between" align="center" mb="2">
             <Text size="5" color="gray">

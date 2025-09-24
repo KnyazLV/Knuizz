@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { startGame } from "../../../features/game/gameSlice.ts";
 import type { RootState } from "../../../app/store.ts";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "react-responsive";
 
 const ANIMATION_DURATION = 150;
 
@@ -67,6 +68,7 @@ export default function GameModeSelector() {
   const [isContentVisible, setIsContentVisible] = useState(true);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const { data: profile } = useGetUserProfileQuery();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -156,6 +158,7 @@ export default function GameModeSelector() {
           display: "flex",
           minWidth: "0",
           height: "100%",
+          flexDirection: isMobile ? "column" : "row",
         }}
       >
         {/* Left */}

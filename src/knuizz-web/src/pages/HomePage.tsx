@@ -41,7 +41,11 @@ export default function HomePage() {
           <div className="animate__animated animate__zoomIn animate__faster w-full flex justify-center flex-col align-center">
             <div
               className="flex flex-col items-start m-auto"
-              style={{ width: "100%", maxWidth: 1400 }}
+              style={{
+                width: "100%",
+                maxWidth: 1400,
+                padding: "0 10px",
+              }}
             >
               <Button
                 onClick={() => setShowLobby(false)}
@@ -134,7 +138,7 @@ export default function HomePage() {
             align="center"
             color="gray"
             mb="4"
-            style={{ maxWidth: "600px" }}
+            style={{ maxWidth: "600px", padding: "0 10px" }}
             className="animate__animated animate__fadeInUp animate__delay-1s"
           >
             {t("homePage.description")}

@@ -30,6 +30,7 @@ import QuizFormDialog from "./QuizFormDialog.tsx";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 interface UserQuizzesTableProps {
   userId: string;
@@ -142,7 +143,7 @@ export default function UserQuizzesTable({ userId }: UserQuizzesTableProps) {
                       <Text weight="bold">{quiz.title}</Text>
                     </Table.Cell>
                     <Table.Cell justify="center">
-                      {new Intl.DateTimeFormat("ru-RU", {
+                      {new Intl.DateTimeFormat(i18n.language, {
                         year: "numeric",
                         month: "long",
                         day: "numeric",

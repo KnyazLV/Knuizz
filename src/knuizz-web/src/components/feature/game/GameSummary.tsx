@@ -99,7 +99,7 @@ export default function GameSummary({
         align="center"
         justify="center"
         className="animate__animated animate__fadeInUp"
-        style={{ minHeight: "80vh" }}
+        style={{ minHeight: "80vh", padding: "0 10px" }}
       >
         <Card style={{ width: "100%", maxWidth: "600px" }}>
           <Box p="4">

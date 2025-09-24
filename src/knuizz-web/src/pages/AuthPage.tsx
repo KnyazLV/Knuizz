@@ -37,7 +37,12 @@ export default function AuthPage() {
         <ArrowLeftIcon width="18" height="18" />
         {t("auth.backToHome")}
       </Button>
-      <Flex align="center" justify="center" className="min-h-screen">
+      <Flex
+        align="center"
+        justify="center"
+        className="min-h-screen"
+        style={{ padding: 10 }}
+      >
         <AuthForm isLoginMode={isLogin} onToggleMode={toggleForm} />
       </Flex>
     </>

@@ -30,6 +30,8 @@ import DonutChart from "../components/ui/DonutChart";
 import crownImage from "../shared/assets/crown.png";
 import type { MatchHistory } from "@/shared/types/api";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "react-responsive";
+import i18n from "i18next";
 
 function experienceForNextLevel(currentLevel: number): number {
   const baseExperience = 50.0;
@@ -38,6 +40,8 @@ function experienceForNextLevel(currentLevel: number): number {
 }
 
 export default function ProfilePage() {
+  const isTablet = useMediaQuery({ maxWidth: 940 });
+  const isMobile = useMediaQuery({ maxWidth: 530 });
   const { t } = useTranslation();
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated,
@@ -179,7 +183,11 @@ export default function ProfilePage() {
       </Flex>
 
       {/* PLAYER STATS */}
-      <Flex className="w-full max-w-md" direction="row" gap="5">
+      <Flex
+        className="w-full max-w-md"
+        direction={isTablet ? "column" : "row"}
+        gap="5"
+      >
         <Card className="w-full" style={{ flex: 1.5 }}>
           <Flex direction="column" gap="4" align="center" p="3">
             <Heading>{t("profile.matchHistory.title")}</Heading>
@@ -204,7 +212,7 @@ export default function ProfilePage() {
                     <Table.Row key={match.id}>
                       <Table.Cell justify="start">
                         <Text size="1" color="gray">
-                          {new Intl.DateTimeFormat("ru-RU", {
+                          {new Intl.DateTimeFormat(i18n.language, {
                             day: "numeric",
                             month: "long",
                             hour: "2-digit",
@@ -252,6 +260,7 @@ export default function ProfilePage() {
         <Card className="w-full max-w-md" style={{ flex: 2 }}>
           <Heading align="center">{t("profile.statistics.title")}</Heading>
           <Flex
+            direction={isMobile ? "column-reverse" : "row"}
             justify="between"
             gap="4"
             align="center"
@@ -286,7 +295,7 @@ export default function ProfilePage() {
         </Card>
       </Flex>
       {userId && (
-        <Box className="w-full max-w-4xl mt-4">
+        <Box className="w-full max-w-4xl mt-4" style={{ marginBottom: 20 }}>
           <UserQuizzesTable userId={userId} />
         </Box>
       )}
