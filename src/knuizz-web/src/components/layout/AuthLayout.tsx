@@ -1,5 +1,4 @@
-﻿// src/components/layout/AuthLayout.tsx
-import { Outlet } from "react-router-dom";
+﻿import { Outlet } from "react-router-dom";
 import ScrollToTop from "../utils/ScrollToTop";
 
 export default function AuthLayout() {

@@ -1,5 +1,4 @@
-﻿// src/hooks/useOnScreen.ts
-import { useState, useEffect, type RefObject } from "react";
+﻿import { useState, useEffect, type RefObject } from "react";
 
 export function useOnScreen(ref: RefObject<HTMLElement>): boolean {
   const [isIntersecting, setIntersecting] = useState(false);

@@ -1,8 +1,8 @@
 ﻿// src/components/ui/UserStatsHoverCard.tsx
 import { HoverCard, Flex, Text, Box, Spinner } from "@radix-ui/themes";
-import { useGetUserStatisticsQuery } from "@/features/api/userApiSlice.ts";
 import React from "react";
-import { useTranslation } from "react-i18next"; // 1. Импортируем хук
+import { useTranslation } from "react-i18next";
+import { useGetUserStatisticsQuery } from "@/features/api/apiSlice.ts";
 
 interface UserStatsHoverCardProps {
   userId: string;

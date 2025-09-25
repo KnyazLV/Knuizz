@@ -14,9 +14,8 @@ import { InfoCircledIcon } from "@radix-ui/react-icons";
 import UserStatsHoverCard from "../components/ui/UserStatsHoverCard";
 import crownImage from "../shared/assets/crown.png";
 import AnimatedWhenNotice from "../components/ui/AnimatedWhenNotice";
-import FloatingElement from "../components/ui/FloatingElement.tsx";
-import { FloatingElementType } from "../shared/types/FloatingElementType.ts";
 import { useTranslation } from "react-i18next";
+import LeaderboardFloatingElements from "@/components/ui/LeaderboardFloatingElements.tsx";
 
 export default function LeaderboardPage() {
   const { t } = useTranslation();
@@ -52,80 +51,7 @@ export default function LeaderboardPage() {
       align="center"
       className="py-8 px-4 w-full inner-container"
     >
-      <div
-        className="absolute pointer-events-none z-0"
-        style={{ top: 0, bottom: 0, left: 0, right: 0 }}
-      >
-        <div
-          className="animate__animated animate__fadeIn"
-          style={{ animationDelay: "1.2s" }}
-        >
-          <FloatingElement
-            type={FloatingElementType.Cup}
-            size="6rem"
-            top="12%"
-            left="4%"
-            rotation={-15}
-            floatDuration="10s"
-            opacity={0.08}
-          />
-          <FloatingElement
-            type={FloatingElementType.Globe}
-            size="4rem"
-            top="75%"
-            left="10%"
-            rotation={20}
-            floatDuration="8s"
-            opacity={0.06}
-          />
-          <FloatingElement
-            type={FloatingElementType.Book}
-            size="7rem"
-            top="20%"
-            right="5%"
-            rotation={10}
-            floatDuration="12s"
-            opacity={0.09}
-          />
-          <FloatingElement
-            type={FloatingElementType.Music}
-            size="4rem"
-            top="60%"
-            right="7%"
-            rotation={10}
-            floatDuration="14s"
-            opacity={0.09}
-          />
-          <FloatingElement
-            type={FloatingElementType.Puzzle}
-            size="3.5rem"
-            top="85%"
-            right="12%"
-            rotation={-25}
-            floatDuration="9s"
-            opacity={0.07}
-          />
-          <FloatingElement
-            type={FloatingElementType.Brain}
-            size="5rem"
-            top="50%"
-            left="15%"
-            rotation={5}
-            floatDuration="11s"
-            opacity={0.08}
-          />
-          <FloatingElement
-            type={FloatingElementType.Flask}
-            size="4.5rem"
-            top="80%"
-            right="50%"
-            rotation={15}
-            floatDuration="7s"
-            opacity={0.07}
-          />
-        </div>
-      </div>
-
+      <LeaderboardFloatingElements />
       <AnimatedWhenNotice animationName="fadeInUp">
         <Box className="text-center">
           <Heading size="8" className="uppercase text-gradient">

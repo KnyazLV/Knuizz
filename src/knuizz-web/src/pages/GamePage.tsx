@@ -1,5 +1,4 @@
-﻿// src/pages/GamePage.tsx
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../app/store";
 import { answerQuestion, resetGame } from "../features/game/gameSlice";
@@ -129,7 +128,7 @@ export default function GamePage() {
     } else {
       playSound("wrong");
     }
-
+    stopSound("timeout");
     setSelectedAnswerIndex(index);
     setIsRevealing(true);
   };

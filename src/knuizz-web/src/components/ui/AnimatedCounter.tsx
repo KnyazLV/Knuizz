@@ -1,7 +1,6 @@
-﻿// src/components/ui/AnimatedCounter.tsx
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { Heading } from "@radix-ui/themes";
-import { useOnScreen } from "../../hooks/useOnScreen";
+import { useOnScreen } from "@/hooks/useOnScreen.ts";
 import * as React from "react";
 
 type AnimatedCounterProps = {

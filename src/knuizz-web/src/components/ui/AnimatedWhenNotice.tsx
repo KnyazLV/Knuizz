@@ -1,6 +1,5 @@
-﻿// src/components/ui/AnimatedOnScroll.tsx
-import React, { useRef, type ReactNode, type CSSProperties } from "react";
-import { useOnScreen } from "../../hooks/useOnScreen";
+﻿import React, { useRef, type ReactNode, type CSSProperties } from "react";
+import { useOnScreen } from "@/hooks/useOnScreen.ts";
 
 type AnimatedOnScrollProps = {
   children: ReactNode;

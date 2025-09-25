@@ -1,5 +1,4 @@
-﻿// src/components/layout/Footer.tsx
-import { Flex, Text } from "@radix-ui/themes";
+﻿import { Flex, Text } from "@radix-ui/themes";
 import { useTranslation } from "react-i18next";
 
 export default function Footer() {

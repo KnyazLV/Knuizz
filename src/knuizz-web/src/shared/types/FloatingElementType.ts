@@ -1,13 +1,13 @@
-﻿// src/shared/types/floatingElement.ts
-export const FloatingElementType = {
-    QuestionMark: 'QuestionMark',
-    Book: 'Book',
-    Brain: 'Brain',
-    Cup: 'Cup',
-    Flask: 'Flask',
-    Globe: 'Globe',
-    Music: 'Music',
-    Puzzle: 'Puzzle',
+﻿export const FloatingElementType = {
+  QuestionMark: "QuestionMark",
+  Book: "Book",
+  Brain: "Brain",
+  Cup: "Cup",
+  Flask: "Flask",
+  Globe: "Globe",
+  Music: "Music",
+  Puzzle: "Puzzle",
 } as const;
 
-export type FloatingElementType = typeof FloatingElementType[keyof typeof FloatingElementType];
+export type FloatingElementType =
+  (typeof FloatingElementType)[keyof typeof FloatingElementType];

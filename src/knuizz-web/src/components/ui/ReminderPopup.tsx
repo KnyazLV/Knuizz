@@ -2,7 +2,7 @@
 import { Text, Button, Card, Flex } from "@radix-ui/themes";
 import { BellIcon } from "@radix-ui/react-icons";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../app/store.ts";
+import type { RootState } from "@/app/store.ts";
 import { useTranslation } from "react-i18next";
 
 const POPUP_STORAGE_KEY = "knz:popup:last-shown";

@@ -1,5 +1,4 @@
-﻿// src/features/api/apiSlice.ts
-import {
+﻿import {
   type BaseQueryFn,
   createApi,
   type FetchArgs,
@@ -21,8 +20,8 @@ import type {
   UpdateQuizRequest,
   Question,
   MatchResult,
-} from "../../shared/types/api";
-import type { RootState } from "../../app/store";
+} from "@/shared/types/api";
+import type { RootState } from "@/app/store.ts";
 import { logout } from "../auth/authSlice.ts";
 
 const baseQuery = fetchBaseQuery({

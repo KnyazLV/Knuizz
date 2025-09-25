@@ -1,5 +1,4 @@
-﻿// src/components/ui/AuthForm.tsx
-import { useState, type FormEvent, useEffect } from "react";
+﻿import { useState, type FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   useLoginMutation,

@@ -1,5 +1,4 @@
-﻿// src/components/features/game-play/GameSummary.tsx
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/app/store.ts";

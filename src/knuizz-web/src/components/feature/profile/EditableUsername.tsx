@@ -1,5 +1,4 @@
-﻿// src/components/ui/EditableUsername.tsx
-import { useState } from "react";
+﻿import { useState } from "react";
 import {
   Flex,
   Heading,
@@ -9,7 +8,6 @@ import {
 } from "@radix-ui/themes";
 import { Pencil1Icon, CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
 
-// ИСПРАВЛЕНИЕ 2: Используем Promise<void> вместо Promise<any>
 interface EditableUsernameProps {
   initialUsername: string;
   onSave: (newUsername: string) => Promise<void>;

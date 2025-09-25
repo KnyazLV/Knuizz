@@ -24,7 +24,6 @@ export default function ErrorPage() {
   return (
     <Flex
       align="center"
-      // justify="center"
       direction="column"
       style={{ height: "100vh", padding: 24, marginTop: 100 }}
     >

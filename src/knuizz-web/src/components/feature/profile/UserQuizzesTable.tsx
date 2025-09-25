@@ -1,5 +1,4 @@
-﻿// src/components/features/quiz/UserQuizzesTable.tsx
-import {
+﻿import {
   useDeleteQuizMutation,
   useGetUserQuizzesQuery,
   useUpdateQuizPublicationMutation,

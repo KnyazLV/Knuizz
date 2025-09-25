@@ -1,5 +1,4 @@
-﻿// src/pages/HomePage.tsx
-import {
+﻿import {
   Heading,
   Text,
   Button,
@@ -27,6 +26,53 @@ import GameModeSelector from "../components/feature/gameSetup/GameModeSelector.t
 import { useState } from "react";
 import ReminderPopup from "../components/ui/ReminderPopup.tsx";
 import { Trans, useTranslation } from "react-i18next";
+
+const floatingElements = [
+  {
+    animationDelay: "2.5s",
+    props: {
+      type: FloatingElementType.QuestionMark,
+      size: "8rem",
+      top: "15%",
+      left: "10%",
+      rotation: -15,
+      floatDuration: "10s",
+    },
+  },
+  {
+    animationDelay: "3.0s",
+    props: {
+      type: FloatingElementType.QuestionMark,
+      size: "5rem",
+      top: "65%",
+      left: "20%",
+      rotation: 20,
+      floatDuration: "8s",
+    },
+  },
+  {
+    animationDelay: "3.5s",
+    props: {
+      type: FloatingElementType.QuestionMark,
+      size: "10rem",
+      top: "25%",
+      right: "8%",
+      rotation: 10,
+      floatDuration: "12s",
+    },
+  },
+  {
+    animationDelay: "4.0s",
+    props: {
+      type: FloatingElementType.QuestionMark,
+      size: "6rem",
+      top: "70%",
+      right: "18%",
+      rotation: -25,
+      floatDuration: "9s",
+    },
+  },
+];
 
 export default function HomePage() {
   const [showLobby, setShowLobby] = useState(false);
@@ -64,58 +110,15 @@ export default function HomePage() {
         </Section>
       ) : (
         <Section className="relative min-h-[calc(100vh_-_65px)] flex flex-col items-center justify-center text-center px-2">
-          <div
-            className="animate__animated animate__fadeIn"
-            style={{ animationDelay: "2.5s" }}
-          >
-            <FloatingElement
-              type={FloatingElementType.QuestionMark}
-              size="8rem"
-              top="15%"
-              left="10%"
-              rotation={-15}
-              floatDuration="10s"
-            />
-          </div>
-          <div
-            className="animate__animated animate__fadeIn"
-            style={{ animationDelay: "3.0s" }}
-          >
-            <FloatingElement
-              type={FloatingElementType.QuestionMark}
-              size="5rem"
-              top="65%"
-              left="20%"
-              rotation={20}
-              floatDuration="8s"
-            />
-          </div>
-          <div
-            className="animate__animated animate__fadeIn"
-            style={{ animationDelay: "3.5s" }}
-          >
-            <FloatingElement
-              type={FloatingElementType.QuestionMark}
-              size="10rem"
-              top="25%"
-              right="8%"
-              rotation={10}
-              floatDuration="12s"
-            />
-          </div>
-          <div
-            className="animate__animated animate__fadeIn"
-            style={{ animationDelay: "4.0s" }}
-          >
-            <FloatingElement
-              type={FloatingElementType.QuestionMark}
-              size="6rem"
-              top="70%"
-              right="18%"
-              rotation={-25}
-              floatDuration="9s"
-            />
-          </div>
+          {floatingElements.map((item, idx) => (
+            <div
+              key={idx}
+              className="animate__animated animate__fadeIn"
+              style={{ animationDelay: item.animationDelay }}
+            >
+              <FloatingElement {...item.props} />
+            </div>
+          ))}
 
           <Text
             as="span"

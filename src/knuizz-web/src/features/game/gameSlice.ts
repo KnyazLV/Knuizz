@@ -1,5 +1,5 @@
 ﻿import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Question } from "../../shared/types/api";
+import type { Question } from "@/shared/types/api";
 
 interface GameState {
   gameId: string | null;

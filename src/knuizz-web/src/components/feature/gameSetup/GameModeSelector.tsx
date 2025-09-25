@@ -3,11 +3,12 @@ import {
   useGetUserProfileQuery,
   useLazyGetQuestionsFromSourceQuery,
   useLazyGetQuizByIdQuery,
-} from "../../../features/api/apiSlice.ts";
+} from "@/features/api/apiSlice.ts";
 import {
   Badge,
   Box,
   Button,
+  Callout,
   Card,
   Flex,
   Heading,
@@ -26,8 +27,8 @@ import UserQuizzesView from "./UserQuizzesView.tsx";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { startGame } from "../../../features/game/gameSlice.ts";
-import type { RootState } from "../../../app/store.ts";
+import { startGame } from "@/features/game/gameSlice.ts";
+import type { RootState } from "@/app/store.ts";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "react-responsive";
 
@@ -65,6 +66,7 @@ export default function GameModeSelector() {
   const { t } = useTranslation();
   const [activeMode, setActiveMode] = useState("trivia_api");
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
   const [isContentVisible, setIsContentVisible] = useState(true);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const { data: profile } = useGetUserProfileQuery();
@@ -123,158 +125,179 @@ export default function GameModeSelector() {
       } else if (selectedSource) {
         questions = await triggerGetQuestions({
           source: selectedSource.value,
-          count: 5,
+          count: 20,
         }).unwrap();
       }
 
       if (questions && questions.length > 0) {
         dispatch(startGame({ questions, sourceName, userQuizId }));
         navigate("/game");
+        setServerError(null);
       } else {
         toast.error(t("gameModeSelector.errorLoadQuestions"));
       }
     } catch (error) {
-      toast.error(t("gameModeSelector.errorStartGame"));
+      setServerError(t("gameModeSelector.errorStartGame"));
       console.error("Error when starting the game:", error);
     }
   };
 
   return (
-    <Card
-      className="game-mode-selector"
-      style={{
-        width: "100%",
-        transition: "all 0.3s ease-in-out",
-      }}
-    >
-      <Heading size="7" align="center" m="2">
-        {t("gameModeSelector.title")}
-      </Heading>
-      <Separator size="4" my="4" />
-
-      <Flex
-        gap="5"
+    <>
+      <Card
+        className="game-mode-selector"
         style={{
-          display: "flex",
-          minWidth: "0",
-          height: "100%",
-          flexDirection: isMobile ? "column" : "row",
+          width: "100%",
+          transition: "all 0.3s ease-in-out",
         }}
       >
-        {/* Left */}
-        <Box
-          style={{
-            flexGrow: 0.5,
-            flexBasis: 0,
-            minWidth: 0,
-            height: "100%",
-          }}
-        >
-          <Heading align="center" m="2" size="4">
-            {t("gameModeSelector.sourcesHeading")}
-          </Heading>
-          <RadioCards.Root value={activeMode} onValueChange={handleModeChange}>
-            <Flex direction="column" gap="3" style={{ height: 400 }}>
-              {predefinedSources.map((source) => {
-                const disabled =
-                  (source.value === "my_quizzes" ||
-                    source.value === "search_quizzes") &&
-                  !profile;
+        <Heading size="7" align="center" m="2">
+          {t("gameModeSelector.title")}
+        </Heading>
+        <Separator size="4" my="4" />
 
-                return (
-                  <RadioCards.Item
-                    key={source.value}
-                    value={source.value}
-                    disabled={disabled}
-                    style={{ height: "100%" }}
-                  >
-                    <Flex justify="between" align="center" width="100%">
-                      <Flex gap="3" align="center">
-                        <source.icon width="20" height="20" />
-                        <Text weight="bold">{source.label}</Text>
-                      </Flex>
-                      <Badge color="gray" radius="full">
-                        {source.lang}
-                      </Badge>
-                    </Flex>
-                  </RadioCards.Item>
-                );
-              })}
-            </Flex>
-          </RadioCards.Root>
-        </Box>
-
-        {/* Right */}
-        <Box
+        <Flex
+          gap="5"
           style={{
             display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-            flexBasis: 0,
-            minWidth: 0,
-            transition: `opacity ${ANIMATION_DURATION}ms ease-out`,
-            opacity: isContentVisible ? 1 : 0,
+            minWidth: "0",
+            height: "100%",
+            flexDirection: isMobile ? "column" : "row",
           }}
         >
-          <Heading align="center" m="2" size="4">
-            {t("gameModeSelector.descriptionHeading")}
-          </Heading>
-          <Flex direction="column" gap="2" style={{ height: "100%" }}>
-            <Box>
-              {selectedSource && selectedSource.description && (
-                <Card variant="surface">
-                  <Heading mb="3">{selectedSource.label}</Heading>
-                  <Text color="gray" as="p">
-                    {selectedSource.description}
-                  </Text>
-                  {selectedSource.sourceLink && (
-                    <Text as="p" mt="4" size="2">
-                      {t("gameModeSelector.sourceLabel")}:{" "}
-                      <Link href={selectedSource.sourceLink} target="_blank">
-                        {selectedSource.sourceLink}
-                      </Link>
+          {/* Left */}
+          <Box
+            style={{
+              flexGrow: 0.5,
+              flexBasis: 0,
+              minWidth: 0,
+              height: "100%",
+            }}
+          >
+            <Heading align="center" m="2" size="4">
+              {t("gameModeSelector.sourcesHeading")}
+            </Heading>
+            <RadioCards.Root
+              value={activeMode}
+              onValueChange={handleModeChange}
+            >
+              <Flex direction="column" gap="3" style={{ height: 400 }}>
+                {predefinedSources.map((source) => {
+                  const disabled =
+                    (source.value === "my_quizzes" ||
+                      source.value === "search_quizzes") &&
+                    !profile;
+
+                  return (
+                    <RadioCards.Item
+                      key={source.value}
+                      value={source.value}
+                      disabled={disabled}
+                      style={{ height: "100%" }}
+                    >
+                      <Flex justify="between" align="center" width="100%">
+                        <Flex gap="3" align="center">
+                          <source.icon width="20" height="20" />
+                          <Text weight="bold">{source.label}</Text>
+                        </Flex>
+                        <Badge color="gray" radius="full">
+                          {source.lang}
+                        </Badge>
+                      </Flex>
+                    </RadioCards.Item>
+                  );
+                })}
+              </Flex>
+            </RadioCards.Root>
+          </Box>
+
+          {/* Right */}
+          <Box
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: 1,
+              flexBasis: 0,
+              minWidth: 0,
+              transition: `opacity ${ANIMATION_DURATION}ms ease-out`,
+              opacity: isContentVisible ? 1 : 0,
+            }}
+          >
+            <Heading align="center" m="2" size="4">
+              {t("gameModeSelector.descriptionHeading")}
+            </Heading>
+            <Flex direction="column" gap="2" style={{ height: "100%" }}>
+              <Box>
+                {selectedSource && selectedSource.description && (
+                  <Card variant="surface">
+                    <Heading mb="3">{selectedSource.label}</Heading>
+                    <Text color="gray" as="p">
+                      {selectedSource.description}
                     </Text>
-                  )}
-                </Card>
-              )}
+                    {selectedSource.sourceLink && (
+                      <Text as="p" mt="4" size="2">
+                        {t("gameModeSelector.sourceLabel")}:{" "}
+                        <Link href={selectedSource.sourceLink} target="_blank">
+                          {selectedSource.sourceLink}
+                        </Link>
+                      </Text>
+                    )}
+                  </Card>
+                )}
 
-              {activeMode === "my_quizzes" && profile && (
-                <UserQuizzesView
-                  mode="my"
-                  userId={profile.id}
-                  onSelectQuiz={setSelectedQuizId}
-                  selectedQuizId={selectedQuizId}
-                />
-              )}
+                {activeMode === "my_quizzes" && profile && (
+                  <UserQuizzesView
+                    mode="my"
+                    userId={profile.id}
+                    onSelectQuiz={setSelectedQuizId}
+                    selectedQuizId={selectedQuizId}
+                  />
+                )}
 
-              {activeMode === "search_quizzes" && profile && (
-                <UserQuizzesView
-                  mode="search"
-                  userId={profile.id}
-                  onSelectQuiz={setSelectedQuizId}
-                  selectedQuizId={selectedQuizId}
-                />
-              )}
+                {activeMode === "search_quizzes" && profile && (
+                  <UserQuizzesView
+                    mode="search"
+                    userId={profile.id}
+                    onSelectQuiz={setSelectedQuizId}
+                    selectedQuizId={selectedQuizId}
+                  />
+                )}
 
-              {isCustomQuizMode && !profile && (
-                <Text color="gray">
-                  {t("gameModeSelector.loginRequiredMessage")}
-                </Text>
-              )}
-            </Box>
+                {isCustomQuizMode && !profile && (
+                  <Text color="gray">
+                    {t("gameModeSelector.loginRequiredMessage")}
+                  </Text>
+                )}
+              </Box>
 
-            <Flex justify="center" mt="4" style={{ marginTop: "auto" }}>
-              <Button
-                size="3"
-                disabled={isStartDisabled}
-                onClick={handleStartGame}
-              >
-                {t("gameModeSelector.startButton")}
-              </Button>
+              <Flex justify="center" mt="4" style={{ marginTop: "auto" }}>
+                <Button
+                  size="3"
+                  disabled={isStartDisabled}
+                  onClick={handleStartGame}
+                >
+                  {t("gameModeSelector.startButton")}
+                </Button>
+              </Flex>
+              {serverError && (
+                <Callout.Root color="red" style={{ margin: "0 auto" }}>
+                  <Callout.Text>
+                    <Flex gap="2" justify="between" align="center">
+                      <Text>{serverError}</Text>
+                      <Button
+                        variant="soft"
+                        onClick={() => setServerError(null)}
+                      >
+                        Close
+                      </Button>
+                    </Flex>
+                  </Callout.Text>
+                </Callout.Root>
+              )}
             </Flex>
-          </Flex>
-        </Box>
-      </Flex>
-    </Card>
+          </Box>
+        </Flex>
+      </Card>
+    </>
   );
 }

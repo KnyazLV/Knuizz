@@ -1,5 +1,4 @@
-﻿// src/hooks/useSound.tsx
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+﻿import { createContext, useContext, useMemo, type ReactNode } from "react";
 
 export type SoundType = "correct" | "wrong" | "timeout" | "endgame" | "levelup";
 

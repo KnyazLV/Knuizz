@@ -1,9 +1,8 @@
-﻿// src/components/ui/AccuracyDonutChart.tsx
-import { Flex, Text } from "@radix-ui/themes";
+﻿import { Flex, Text } from "@radix-ui/themes";
 
 interface AccuracyDonutChartProps {
-  accuracy: number; // Точность от 0 до 100
-  size?: number; // Размер диаграммы
+  accuracy: number;
+  size?: number;
 }
 
 export default function DonutChart({
@@ -22,7 +21,6 @@ export default function DonutChart({
       style={{ width: size, height: size, position: "relative" }}
     >
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {/* Фоновый круг */}
         <circle
           stroke="var(--gray-a5)"
           fill="transparent"
@@ -31,7 +29,6 @@ export default function DonutChart({
           cx={size / 2}
           cy={size / 2}
         />
-        {/* Круг прогресса */}
         <circle
           stroke="var(--accent-a11)"
           fill="transparent"
@@ -49,7 +46,6 @@ export default function DonutChart({
           }}
         />
       </svg>
-      {/* Текст в центре */}
       <Text
         align="center"
         size="5"

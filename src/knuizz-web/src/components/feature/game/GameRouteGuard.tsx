@@ -1,5 +1,4 @@
-﻿// src/components/feature/game/GameRouteGuard.tsx
-import { useSelector } from "react-redux";
+﻿import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import type { RootState } from "@/app/store.ts";
 

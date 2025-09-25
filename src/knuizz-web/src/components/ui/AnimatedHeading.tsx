@@ -1,5 +1,4 @@
-﻿// src/components/ui/AnimatedHeading.tsx
-import { useEffect, useRef } from "react";
+﻿import { useEffect, useRef } from "react";
 import { Heading } from "@radix-ui/themes";
 import type { HeadingProps } from "@radix-ui/themes";
 import { useWindowWidth } from "@/hooks/useWindowWidth.ts";
