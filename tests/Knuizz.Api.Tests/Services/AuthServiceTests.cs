@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using Knuizz.Api.Application.DTOs.Auth;
+using Knuizz.Api.Application.Exceptions;
 using Knuizz.Api.Application.Services;
 using Knuizz.Api.Domain.Entities;
 using Knuizz.Api.Infrastructure.Data;
@@ -83,7 +84,7 @@ public class AuthServiceTests {
         };
 
         // Act & Assert
-        var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _authService.RegisterAsync(registerDto));
+        var ex = Assert.ThrowsAsync<DuplicateUserException>(async () => await _authService.RegisterAsync(registerDto));
         Assert.That(ex.Message, Is.EqualTo("User with this email already exists."));
     }
 
@@ -156,7 +157,7 @@ public class AuthServiceTests {
         };
 
         // --- Act & Assert ---
-        var ex = Assert.ThrowsAsync<ArgumentException>(async () => await _authService.RegisterAsync(registerDto));
-        Assert.That(ex.Message, Is.EqualTo("Username is already taken."));
+        var ex = Assert.ThrowsAsync<DuplicateUserException>(async () => await _authService.RegisterAsync(registerDto));
+        Assert.That(ex.Message, Is.EqualTo("This username is already taken."));
     }
 }

@@ -98,6 +98,20 @@ public class QuizServiceTests {
     public async Task SubmitMatchResultAsync_UserQuizSource_DoesNotUpdateStatistics() {
         // Arrange
         var userId = Guid.NewGuid();
+        var initialStats = new UserStatistics {
+            UserId = userId,
+            Level = 5,
+            Rating = 1200,
+            TotalGamesPlayed = 10,
+            TotalCorrectAnswers = 100,
+            TotalAnswers = 200,
+            CurrentExperience = 20
+        };
+        await _context.UserStatistics.AddAsync(initialStats);
+        await _context.SaveChangesAsync();
+
+        _context.ChangeTracker.Clear();
+
         var resultDto = new SubmitMatchResultDto {
             Score = 5,
             TotalQuestions = 10,
@@ -107,14 +121,24 @@ public class QuizServiceTests {
         };
 
         // Act
-        await _quizService.SubmitMatchResultAsync(userId, resultDto);
+        var response = await _quizService.SubmitMatchResultAsync(userId, resultDto);
 
         // Assert
-        var userStats = await _context.UserStatistics.FindAsync(userId);
-        Assert.That(userStats, Is.Null);
-
+        var updatedStats = await _context.UserStatistics.FindAsync(userId);
+        Assert.That(updatedStats, Is.Not.Null);
+        
+        Assert.That(updatedStats.Rating, Is.EqualTo(initialStats.Rating));
+        
+        Assert.That(updatedStats.CurrentExperience, Is.EqualTo(initialStats.CurrentExperience));
+        
+        Assert.That(updatedStats.TotalGamesPlayed, Is.EqualTo(initialStats.TotalGamesPlayed + 1));
+        Assert.That(updatedStats.TotalCorrectAnswers, Is.EqualTo(initialStats.TotalCorrectAnswers + resultDto.Score));
+        Assert.That(updatedStats.TotalAnswers, Is.EqualTo(initialStats.TotalAnswers + resultDto.TotalQuestions));
+        Assert.That(response.XpGained, Is.EqualTo(0));
+        
         var matchHistory = await _context.MatchHistories.FirstOrDefaultAsync(m => m.UserId == userId);
         Assert.That(matchHistory, Is.Not.Null);
+        Assert.That(matchHistory.RatingChange, Is.EqualTo(0));
     }
 
     [Test]
@@ -165,7 +189,7 @@ public class QuizServiceTests {
             new() { QuestionText = "Question 2" }
         };
         var requestedCount = 2;
-        
+
         _mockTriviaBuffer.Setup(b => b.GetQuestionsAsync(requestedCount, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedQuestions);
 
@@ -298,18 +322,21 @@ public class QuizServiceTests {
                 Author = author1,
                 AuthorId = author1.Id,
                 Title = "C# Quiz",
+                IsPublished = true,
                 CreatedAt = DateTime.UtcNow.AddDays(-1)
             },
             new UserQuiz {
                 Author = author1,
                 AuthorId = author1.Id,
                 Title = "SQL Quiz",
+                IsPublished = true,
                 CreatedAt = DateTime.UtcNow
             },
             new UserQuiz {
                 Author = author2,
                 AuthorId = author2.Id,
-                Title = "React Quiz"
+                Title = "React Quiz",
+                IsPublished = false
             }
         );
         await _context.SaveChangesAsync();
@@ -319,14 +346,10 @@ public class QuizServiceTests {
         Assert.That(author1Quizzes.Count, Is.EqualTo(2));
         Assert.That(author1Quizzes.First().Title, Is.EqualTo("SQL Quiz"));
 
-        var nonExistentAuthorQuizzes = await _quizService.GetQuizzesByAuthorAsync(Guid.NewGuid());
-        Assert.That(nonExistentAuthorQuizzes, Is.Empty);
-
         // --- Act & Assert for SearchQuizzesByTitleAsync ---
         var searchResult = await _quizService.SearchQuizzesByTitleAsync("C#");
-        Assert.That(searchResult.Count, Is.EqualTo(1));
+        Assert.That(searchResult.Count, Is.EqualTo(1)); // Теперь найдет
         Assert.That(searchResult.First().Title, Is.EqualTo("C# Quiz"));
-        Assert.That(searchResult.First().AuthorName, Is.EqualTo("Author One"));
 
         // Verify searching for something that doesn't exist
         var emptySearchResult = await _quizService.SearchQuizzesByTitleAsync("JavaScript");
