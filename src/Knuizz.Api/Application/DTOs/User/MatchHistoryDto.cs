@@ -7,5 +7,5 @@ public class MatchHistoryDto {
     public int RatingChange { get; set; }
     public int DurationSeconds { get; set; }
     public DateTime CompletedAt { get; set; }
-    public string SourceName { get; set; }
+    public required string SourceName { get; set; }
 }

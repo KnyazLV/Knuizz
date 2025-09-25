@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Knuizz.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Knuizz.Api.Infrastructure.Data;
 
@@ -45,18 +46,17 @@ public class KnuizzDbContext : DbContext {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.QuestionText).IsRequired();
             entity.Property(e => e.SourceName).HasMaxLength(50);
+            var optionsComparer = new ValueComparer<string[]>(
+                (c1, c2) => (c1 == null && c2 == null) || (c1 != null && c2 != null && c1.SequenceEqual(c2)),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToArray());
 
-            // Converting an array of strings to JSON and back
-            // entity.Property(e => e.Options)
-            //     .HasConversion(
-            //         v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-            //         v => JsonSerializer.Deserialize<string[]>(v, (JsonSerializerOptions)null))
-            //     .HasColumnType("jsonb");
             entity.Property(e => e.Options)
                 .HasConversion(
                     v => JsonSerializer.Serialize(v ?? Array.Empty<string>(), new JsonSerializerOptions()),
                     v => JsonSerializer.Deserialize<string[]>(v, new JsonSerializerOptions()) ?? Array.Empty<string>())
-                .HasColumnType("jsonb");
+                .HasColumnType("jsonb")
+                .Metadata.SetValueComparer(optionsComparer);
 
             entity.HasOne(e => e.UserQuiz)
                 .WithMany(q => q.Questions)

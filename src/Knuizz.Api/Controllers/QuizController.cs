@@ -76,7 +76,7 @@ public class QuizController : ControllerBase {
             return Ok(result);
         }
         catch (Exception ex) {
-            return StatusCode(500, new { message = "An error occurred while submitting the result." });
+            return StatusCode(500, new { message = $"An internal error occurred: {ex.Message}" });
         }
     }
 

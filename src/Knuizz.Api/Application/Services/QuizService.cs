@@ -193,8 +193,6 @@ public class QuizService : IQuizService {
                 ratingChange = CalculateRatingChange(resultDto.Score, resultDto.TotalQuestions, userStats.Rating);
                 xpGained = resultDto.Score;
                 userStats.Rating += ratingChange;
-            } else {
-                xpGained = resultDto.Score;
             }
 
             userStats.TotalGamesPlayed++;
