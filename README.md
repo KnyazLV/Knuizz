@@ -16,8 +16,8 @@
 
 ## Галерея
 
-![Poster1](./docs/posters/poster1.png)
-![Poster2](./docs/posters/poster2.png)
+![Poster1](./docs/posters/Poster1.png)
+![Poster2](./docs/posters/Poster2.png)
 
 ## Технологии
 
