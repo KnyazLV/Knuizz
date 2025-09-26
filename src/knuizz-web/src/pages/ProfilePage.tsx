@@ -207,47 +207,106 @@ export default function ProfilePage() {
                   </Table.ColumnHeaderCell>
                 </Table.Header>
                 <Table.Body>
-                  {matchHistory.map((match: MatchHistory) => (
-                    <Table.Row key={match.id}>
-                      <Table.Cell justify="start">
-                        <Text size="1" color="gray">
-                          {new Intl.DateTimeFormat(i18n.language, {
+                  {matchHistory.map((match: MatchHistory) => {
+                    const dateFormatOptions: Intl.DateTimeFormatOptions =
+                      isMobile
+                        ? {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          }
+                        : {
                             day: "numeric",
                             month: "long",
                             hour: "2-digit",
                             minute: "2-digit",
                             hour12: false,
-                          }).format(new Date(match.completedAt))}
-                        </Text>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Badge
-                          color={
-                            match.sourceName.includes("trivia")
-                              ? "blue"
-                              : "purple"
-                          }
-                        >
-                          {match.sourceName.replace("_", " ")}
-                        </Badge>
-                      </Table.Cell>
-                      <Table.Cell justify="center">
-                        <Text weight="bold">
-                          {match.score} / {match.totalQuestions}
-                        </Text>
-                      </Table.Cell>
-                      <Table.Cell justify="end">
-                        <Text
-                          weight="bold"
-                          color={match.ratingChange >= 0 ? "green" : "red"}
-                        >
-                          {match.ratingChange > 0 ? "+" : ""}
-                          {match.ratingChange}
-                        </Text>
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
+                          };
+
+                    return (
+                      <Table.Row key={match.id}>
+                        <Table.Cell justify="start">
+                          <Text size="1" color="gray">
+                            {new Intl.DateTimeFormat(
+                              i18n.language,
+                              dateFormatOptions,
+                            ).format(new Date(match.completedAt))}
+                          </Text>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <Badge
+                            color={
+                              match.sourceName.includes("trivia")
+                                ? "blue"
+                                : "purple"
+                            }
+                          >
+                            {match.sourceName.replace("_", " ")}
+                          </Badge>
+                        </Table.Cell>
+                        <Table.Cell justify="center">
+                          <Text weight="bold">
+                            {match.score} / {match.totalQuestions}
+                          </Text>
+                        </Table.Cell>
+                        <Table.Cell justify="end">
+                          <Text
+                            weight="bold"
+                            color={match.ratingChange >= 0 ? "green" : "red"}
+                          >
+                            {match.ratingChange > 0 ? "+" : ""}
+                            {match.ratingChange}
+                          </Text>
+                        </Table.Cell>
+                      </Table.Row>
+                    );
+                  })}
                 </Table.Body>
+                {/*<Table.Body>*/}
+                {/*  {matchHistory.map((match: MatchHistory) => (*/}
+                {/*    <Table.Row key={match.id}>*/}
+                {/*      <Table.Cell justify="start">*/}
+                {/*        <Text size="1" color="gray">*/}
+                {/*          {new Intl.DateTimeFormat(i18n.language, {*/}
+                {/*            day: "numeric",*/}
+                {/*            month: "long",*/}
+                {/*            hour: "2-digit",*/}
+                {/*            minute: "2-digit",*/}
+                {/*            hour12: false,*/}
+                {/*          }).format(new Date(match.completedAt))}*/}
+                {/*        </Text>*/}
+                {/*      </Table.Cell>*/}
+                {/*      <Table.Cell>*/}
+                {/*        <Badge*/}
+                {/*          color={*/}
+                {/*            match.sourceName.includes("trivia")*/}
+                {/*              ? "blue"*/}
+                {/*              : "purple"*/}
+                {/*          }*/}
+                {/*        >*/}
+                {/*          {match.sourceName.replace("_", " ")}*/}
+                {/*        </Badge>*/}
+                {/*      </Table.Cell>*/}
+                {/*      <Table.Cell justify="center">*/}
+                {/*        <Text weight="bold">*/}
+                {/*          {match.score} / {match.totalQuestions}*/}
+                {/*        </Text>*/}
+                {/*      </Table.Cell>*/}
+                {/*      <Table.Cell justify="end">*/}
+                {/*        <Text*/}
+                {/*          weight="bold"*/}
+                {/*          color={match.ratingChange >= 0 ? "green" : "red"}*/}
+                {/*        >*/}
+                {/*          {match.ratingChange > 0 ? "+" : ""}*/}
+                {/*          {match.ratingChange}*/}
+                {/*        </Text>*/}
+                {/*      </Table.Cell>*/}
+                {/*    </Table.Row>*/}
+                {/*  ))}*/}
+                {/*</Table.Body>*/}
               </Table.Root>
             ) : (
               <Text color="gray" align="center" className="mt-4">
