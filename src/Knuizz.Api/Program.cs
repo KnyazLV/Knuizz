@@ -20,15 +20,17 @@ builder.Services.AddDbContext<KnuizzDbContext>(options => options.UseNpgsql(conn
 builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
+if (allowedOrigins == null || allowedOrigins.Length == 0) {
+    throw new InvalidOperationException("AllowedOrigins for CORS is not configured.");
+}
+
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowReactApp", policyBuilder => {
-        // React-app URL (localhost:3000 in dev)
-        policyBuilder.WithOrigins("http://localhost:5173")
+        policyBuilder.WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
-        // policyBuilder.WithOrigins("http://localhost:3000")
-        //     .AllowAnyHeader()
-        //     .AllowAnyMethod();
     });
 });
 
@@ -75,7 +77,6 @@ builder.Services.AddSwaggerGen(options => {
     // --- END: Add JWT Authentication to Swagger ---
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    // Указываем Swagger использовать этот файл.
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
@@ -119,7 +120,7 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI(options => { options.EnablePersistAuthorization(); });
     app.UseReDoc(options =>
     {
-        // to open ReDoc follow this path: http://localhost:5130/api-docs
+        // to open ReDoc follow this path: http://<URL>/api-docs
         options.DocumentTitle = "Knuizz API Docs";
         options.SpecUrl = "/swagger/v1/swagger.json";
     });

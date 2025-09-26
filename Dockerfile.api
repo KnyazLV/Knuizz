@@ -1,0 +1,21 @@
+﻿FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+COPY Knuizz.sln .
+COPY src/Knuizz.Api/Knuizz.Api.csproj ./src/Knuizz.Api/
+COPY tests/Knuizz.Api.Tests/Knuizz.Api.Tests.csproj ./tests/Knuizz.Api.Tests/
+
+RUN dotnet restore Knuizz.sln
+
+COPY . .
+
+WORKDIR /src/src/Knuizz.Api
+RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
+
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+WORKDIR /app
+COPY --from=build /app/publish .
+
+EXPOSE 80
+ENTRYPOINT ["dotnet", "Knuizz.Api.dll"]

@@ -296,7 +296,24 @@
         },
         "responses": {
           "200": {
-            "description": "Match result submitted successfully"
+            "description": "Match result submitted successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchResultResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchResultResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchResultResponseDto"
+                }
+              }
+            }
           },
           "401": {
             "description": "User is not authorized.",
@@ -681,6 +698,112 @@
           },
           "401": {
             "description": "The user is not authorized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/quizzes/{id}/publish": {
+      "patch": {
+        "tags": [
+          "Quiz"
+        ],
+        "summary": "Updates the publication status of a quiz. (Authorization required)",
+        "description": "Only the author of the quiz can change its publication status.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the updated quiz.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "DTO with the new publication status.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePublicationStatusDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePublicationStatusDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePublicationStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Status successfully updated."
+          },
+          "401": {
+            "description": "The user is not authorized.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not the author of this quiz.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The quiz has not been found.",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1150,6 +1273,77 @@
           }
         }
       }
+    },
+    "/api/Users/profile/match-history": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Retrieves the match history for the currently authenticated user. (Authorization required)",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Number of recent matches to retrieve (default 5).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchHistoryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchHistoryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1169,6 +1363,9 @@
           "description": {
             "type": "string",
             "nullable": true
+          },
+          "isPublished": {
+            "type": "boolean"
           },
           "questions": {
             "minItems": 1,
@@ -1256,6 +1453,14 @@
             "type": "integer",
             "format": "int32"
           },
+          "totalQuestions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ratingChange": {
+            "type": "integer",
+            "format": "int32"
+          },
           "durationSeconds": {
             "type": "integer",
             "format": "int32"
@@ -1278,6 +1483,66 @@
           },
           "userQuiz": {
             "$ref": "#/components/schemas/UserQuiz"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MatchHistoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalQuestions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ratingChange": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sourceName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MatchResultResponseDto": {
+        "type": "object",
+        "properties": {
+          "xpGained": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "oldRating": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newRating": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "oldLevel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newLevel": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1412,6 +1677,9 @@
             "type": "string",
             "format": "date-time"
           },
+          "isPublished": {
+            "type": "boolean"
+          },
           "questions": {
             "type": "array",
             "items": {
@@ -1452,6 +1720,9 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "isPublished": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1528,6 +1799,15 @@
           "username": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdatePublicationStatusDto": {
+        "type": "object",
+        "properties": {
+          "isPublished": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1619,6 +1899,9 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "isPublished": {
+            "type": "boolean"
           },
           "author": {
             "$ref": "#/components/schemas/User"

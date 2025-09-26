@@ -1,0 +1,50 @@
+services:
+  # PostgreSQL
+  db:
+    image: postgres:15
+    container_name: knuizz-db
+    restart: always
+    environment:
+      - POSTGRES_USER=knuizzuser
+      - POSTGRES_PASSWORD=yoursecurepassword
+      - POSTGRES_DB=knuizzdb
+    volumes:
+      - knuizz-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  # ASP.NET Core API
+  api:
+    container_name: knuizz-api
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "5130:80"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=knuizzdb;Username=knuizzuser;Password=yoursecurepassword
+      - Jwt__Key=ThisIsASecretKeyForKnuizzProjectAtLeast32BytesLong
+      - Jwt__Issuer=KnuizzApi
+      - Jwt__Audience=KnuizzApiClient
+      - Cors__AllowedOrigins__0=http://localhost:5173
+
+
+  # React
+  frontend:
+    container_name: knuizz-frontend
+    build:
+      context: ./src/knuizz-web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5130
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  knuizz-data:

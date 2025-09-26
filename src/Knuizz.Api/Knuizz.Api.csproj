@@ -6,6 +6,8 @@
         <UserSecretsId>4ce1de37-89bb-445e-b717-ea1ea509b566</UserSecretsId>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591</NoWarn>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <EnableDefaultContentItems>false</EnableDefaultContentItems>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
@@ -24,5 +26,15 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Infrastructure\Data\Migrations\" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="Data\**">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 </Project>
