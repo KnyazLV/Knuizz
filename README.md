@@ -1,115 +1,119 @@
+# Knuizz — A Quiz Training Project
 
-# Knuizz — Учебный проект викторины
+*For the Russian version, please see [README.ru.md](./README.ru.md).*
+***
 
-**Knuizz** — учебный full-stack проект, созданный для практики и демонстрации навыков в веб-разработке. Это простое приложение для создания и прохождения викторин, включающее в себя бэкенд на ASP.NET Core и фронтенд на React.
+**Knuizz** is a full-stack training project created to practice and demonstrate web development skills. It's a simple application for creating and taking quizzes, featuring a backend on ASP.NET Core and a frontend on React.
 
-## Что умеет приложение?
+## Features
 
-*   **Играть в викторины**: Можно отвечать на вопросы из нескольких источников, включая "официальные" (с начислением рейтинга) и созданные другими пользователями.
-*   **Создавать свои викторины**: После регистрации можно создавать собственные наборы вопросов и делиться ими.
-*   **Соревноваться**: Есть простая система рейтинга и уровней, а также таблица лидеров для отслеживания прогресса.
-*   **Управлять профилем**: Пользователи могут просматривать свою статистику и управлять созданными викторинами.
+*   **Play Quizzes**: Answer questions from multiple sources, including "official" ones (with rating points) and those created by other users.
+*   **Create Your Own Quizzes**: After registering, you can create your own question sets and share them.
+*   **Compete**: A simple rating and level system, along with a leaderboard to track progress.
+*   **Manage Your Profile**: Users can view their statistics and manage their created quizzes.
 
-## Демо
+## Demo
 
-Живое демо доступно по [данной ссылке](https://www.knuizz.knyaz.eu/)
+A live demo is available at [this link](https://www.knuizz.knyaz.eu/).
 
-## Галерея
+## Gallery
 
 ![Poster1](./docs/posters/Poster1.png)
 ![Poster2](./docs/posters/Poster2.png)
 
-## Технологии
+## Tech Stack
 
 ### Backend (ASP.NET Core API)
-*   **Фреймворк**: .NET 9, ASP.NET Core
-*   **База данных**: PostgreSQL и Entity Framework Core
-*   **Аутентификация**: JWT
-*   **Тестирование**: NUnit для юнит-тестов
-*   **API Документация**: Swagger + Redoc
+*   **Framework**: .NET 9, ASP.NET Core
+*   **Database**: PostgreSQL & Entity Framework Core
+*   **Authentication**: JWT
+*   **Testing**: NUnit for unit tests
+*   **API Documentation**: Swagger + Redoc
 
 ### Frontend (React)
-*   **Сборка**: Vite
-*   **Фреймворк**: React
-*   **Управление состоянием**: Redux Toolkit (с RTK Query)
-*   **Стилизация**: Tailwind CSS и Radix UI
-*   **Маршрутизация**: React Router
-*   **Интернационализация**: i18next
+*   **Build Tool**: Vite
+*   **Framework**: React
+*   **State Management**: Redux Toolkit (with RTK Query)
+*   **Styling**: Tailwind CSS & Radix UI
+*   **Routing**: React Router
+*   **Internationalization**: i18next
 
 
 ## Quickstart (Docker Compose)
 
-Этот способ запустит всё приложение (API, клиент, базу данных) в Docker-контейнерах.
+This method will launch the entire application (API, client, and database) in Docker containers.
 
-### 1. Требования
+### 1. Prerequisites
 
-*   [Docker](https://www.docker.com/) должен быть установлен и запущен.
+*   [Docker](https://www.docker.com/) must be installed and running.
 
-### 2. Клонирование репозитория
+### 2. Clone the Repository
 
 ```bash
-git clone https://github.com/ваш-логин/knuizz.git
+git clone https://github.com/KnyazLV/Knuizz.git
 cd knuizz
 ```
 
-### 3. Настройка переменных
 
-Откройте файл `docker-compose.yml` и замените значения-плейсхолдеры в секции `environment` у сервиса `api`:
+### 3. Configure Environment Variables
 
-*   `POSTGRES_PASSWORD`: Пароль для базы данных.
-*   `ConnectionStrings__DefaultConnection`: Убедитесь, что пароль здесь совпадает с `POSTGRES_PASSWORD`.
-*   `Jwt__Key`: Сгенерируйте и вставьте длинный, случайный ключ (минимум 32 символа).
-*   `Jwt__Issuer`: Идентификатор вашего API (например, `KnuizzApi`).
-*   `Jwt__Audience`: Идентификатор вашего клиента (например, `KnuizzApiClient`).
+Open the `docker-compose.yml` file and replace the placeholder values in the `environment` section of the `api` service:
 
-### 4. Запуск
+*   `POSTGRES_PASSWORD`: A password for the database.
+*   `ConnectionStrings__DefaultConnection`: Ensure the password here matches `POSTGRES_PASSWORD`.
+*   `Jwt__Key`: Generate and insert a long, random key (at least 32 characters).
+*   `Jwt__Issuer`: Your API's identifier (e.g., `KnuizzApi`).
+*   `Jwt__Audience`: Your client's identifier (e.g., `KnuizzApiClient`).
 
-Выполните в корневой папке проекта:
+### 4. Launch the Application
+
+From the root project folder, run:
+
 ```bash
 docker-compose up --build
 ```
-Первый запуск может занять некоторое время.
+The first launch may take some time.
 
-### 5. Доступ к приложению
+### 5. Access the Application
 
-*   **Веб-клиент:** `http://<адрес-вашего-хоста>:5173` (например, `http://localhost:5173`)
-*   **Документация API:** `http://<адрес-вашего-хоста>:5130/swagger` (например, `http://localhost:5130/swagger`)
+*   **Web Client:** `http://<your-host-address>:5173` (e.g., `http://localhost:5173`)
+*   **API Documentation:** `http://<your-host-address>:5130/swagger` (e.g., `http://localhost:5130/swagger`)
 
 
-## Локальный запуск (Без Docker)
+## Local Setup (Without Docker)
 
-Этот способ требует ручной установки .NET, Node.js и PostgreSQL.
+This method requires manual installation of .NET, Node.js, and PostgreSQL.
 
-### 1. Запуск API (бэкенд)
+### 1. Run the API (Backend)
 
-*   **Настройте `user-secrets`** для проекта `Knuizz.Api`. Перейдите в папку `src/Knuizz.Api` и выполните следующие команды, подставив свои значения:
-    ```bash
+*   **Set up `user-secrets`** for the `Knuizz.Api` project. Navigate to `src/Knuizz.Api` and run the following commands with your values:
+    ```
     dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Database=knuizz_db;Username=postgres;Password=YOUR_PASSWORD"
     dotnet user-secrets set "Jwt:Key" "YOUR_SUPER_SECRET_JWT_KEY_32_CHARS_LONG"
     dotnet user-secrets set "Jwt:Issuer" "KnuizzApi"
     dotnet user-secrets set "Jwt:Audience" "KnuizzApiClient"
     ```
-*   **Примените миграции базы данных:**
-    ```bash
+*   **Apply database migrations:**
+    ```
     dotnet ef database update
     ```
-*   **Запустите API:**
-    ```bash
+*   **Run the API:**
+    ```
     dotnet run
     ```
 
-### 2. Запуск клиента (фронтенд)
+### 2. Run the Client (Frontend)
 
-*   **Перейдите в папку клиента:**
-    ```bash
+*   **Navigate to the client directory:**
+    ```
     cd ../knuizz-web 
     ```
-*   **Создайте файл `.env`** и добавьте в него адрес вашего API:
+*   **Create a `.env` file** and add your API's address:
     ```
     VITE_API_URL=http://localhost:5130
     ```
-*   **Установите зависимости и запустите:**
-    ```bash
+*   **Install dependencies and start:**
+    ```
     npm install
     npm run dev
     ```
